@@ -22,6 +22,7 @@
     "@vercel/analytics": "1.5.0",
     "@zk-kit/baby-jubjub": "^1.0.3",
     "@zk-kit/poseidon-cipher": "^0.3.2",
+    "ac-eerc-sdk": "link:../../../.local/share/pnpm/global/5/node_modules/@avalabs/ac-eerc-sdk",
     "blake-hash": "2.0.0",
     "circomlibjs": "^0.1.7",
     "framer-motion": "^10.16.4",
@@ -54,5 +55,10 @@
     "typescript": "^5.2.2",
     "vite": "^5.0.0",
     "vite-plugin-node-polyfills": "^0.22.0"
+  },
+  "pnpm": {
+    "overrides": {
+      "ac-eerc-sdk": "link:../../../.local/share/pnpm/global/5/node_modules/@avalabs/ac-eerc-sdk"
+    }
   }
 }
