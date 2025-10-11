@@ -59,9 +59,6 @@ export function StandaloneMode({
 						{decimals?.toString()}
 					</div>
 
-					<div className="text-cyber-green">Token Name</div>
-					<div className="text-cyber-green/80 break-all">{name ?? "N/A"}</div>
-
 					<div className="text-cyber-green">Token Symbol</div>
 					<div className="text-cyber-green/80 break-all">{symbol ?? "N/A"}</div>
 

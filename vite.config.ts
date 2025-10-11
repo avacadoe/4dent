@@ -23,4 +23,12 @@ export default defineConfig({
 			"node:process": "process",
 		},
 	},
+	optimizeDeps: {
+		include: [
+			"poseidon-lite",
+			"snarkjs",
+			"blake-hash",
+			"js-sha256",
+		],
+	},
 });

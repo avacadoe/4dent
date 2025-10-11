@@ -13,6 +13,9 @@ interface OperationsProps {
 	mode: "standalone" | "converter";
 	isDecryptionKeySet: boolean;
 	refetchBalance: () => void;
+	encryptedBalance?: bigint[];
+	decryptedBalance?: bigint;
+	tokenAddress?: string;
 }
 
 export function Operations({
@@ -24,6 +27,9 @@ export function Operations({
 	isDecryptionKeySet,
 	mode,
 	refetchBalance,
+	encryptedBalance,
+	decryptedBalance,
+	tokenAddress,
 }: OperationsProps) {
 	const handlePrivateMint_ = async (amount: bigint) => {
 		await handlePrivateMint(amount);
@@ -92,6 +98,9 @@ export function Operations({
 						<Withdraw
 							handlePrivateWithdraw={handlePrivateWithdraw_}
 							isDecryptionKeySet={isDecryptionKeySet}
+						encryptedBalance={encryptedBalance}
+						decryptedBalance={decryptedBalance}
+						tokenAddress={tokenAddress}
 						/>
 					</div>
 				</div>

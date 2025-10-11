@@ -7,6 +7,7 @@ import { formatDisplayAmount } from "../../pkg/helpers";
 import { RightTooltip } from "../Tooltip";
 import { CurvePoint } from "../ecc/CurvePoint";
 import { Operations } from "../operations/Operations";
+import { WithdrawalHistory } from "../operations/WithdrawalHistory";
 
 const eERC_CONVERTER_ADDRESS = CONTRACTS.EERC_CONVERTER;
 const ERC20_ADDRESS = CONTRACTS.ERC20;
@@ -245,6 +246,9 @@ export function ConverterMode({
 			<Operations
 				handlePrivateMint={() => Promise.resolve()}
 				handlePrivateBurn={() => Promise.resolve()}
+				encryptedBalance={encryptedBalance}
+				decryptedBalance={decryptedBalance}
+				tokenAddress={ERC20_ADDRESS}
 				handlePrivateTransfer={handlePrivateTransfer}
 				handlePrivateDeposit={handlePrivateDeposit}
 				handlePrivateWithdraw={handlePrivateWithdraw}
@@ -252,6 +256,11 @@ export function ConverterMode({
 				mode="converter"
 				isDecryptionKeySet={isDecryptionKeySet}
 			/>
+
+			{/* Withdrawal History */}
+			<div className="mt-4">
+				<WithdrawalHistory isOpen={false} />
+			</div>
 		</>
 	);
 }
