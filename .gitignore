@@ -34,3 +34,11 @@ dist-ssr
 .env.development.local
 .env.test.local
 .env.production.local
+.env.deployment
+
+# Deployment and debugging artifacts
+auditor-keys.json
+test-sig-recovery.ts
+test-signature-recovery.html
+generateAuditorKeys.ts
+

@@ -224,7 +224,10 @@ export function useMetadataWithdrawal() {
       );
 
       // 3. Execute the metadata withdrawal via the SDK
+      // CRITICAL: Pass userProof and auditorProof first (must match signature!)
       const result = await eercInstance.withdrawWithEncryptedProof(
+        userProof,        // Must be the SAME proofs that were signed
+        auditorProof,     // Must be the SAME proofs that were signed
         recipient,
         amount,
         encryptedBalance,
