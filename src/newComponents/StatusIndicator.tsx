@@ -1,3 +1,4 @@
+import { motion } from "framer-motion";
 import { AiOutlineCheckCircle, AiOutlineClockCircle, AiOutlineExclamationCircle } from "react-icons/ai";
 
 type StatusType = "pending" | "success" | "error" | "info";
@@ -43,17 +44,25 @@ export function StatusIndicator({
 
     if (variant === "inline") {
         return (
-            <div className="flex items-center gap-2">
+            <motion.div 
+                initial={{ opacity: 0, x: -10 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.3 }}
+                className="flex items-center gap-2"
+            >
                 <span className={config.dotClass} />
                 <span className="text-sm font-medium" style={{ color: config.color }}>
                     {message}
                 </span>
-            </div>
+            </motion.div>
         );
     }
 
     return (
-        <div
+        <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3 }}
             className="frost-card p-4 flex items-start gap-3"
             style={{ borderColor: config.color, borderWidth: "1px" }}
         >
@@ -66,6 +75,6 @@ export function StatusIndicator({
                     <p className="text-xs text-[#7A7A7A] mt-1">{details}</p>
                 )}
             </div>
-        </div>
+        </motion.div>
     );
 }

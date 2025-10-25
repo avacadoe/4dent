@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { motion } from "framer-motion";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 import { HiOutlineRefresh } from "react-icons/hi";
 
@@ -22,7 +23,22 @@ export function BalanceCard({
     const [isHidden, setIsHidden] = useState(false);
 
     return (
-        <div className="frost-card p-6">
+        <motion.div 
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.3 }}
+            className="frost-card p-6 relative overflow-hidden"
+        >
+            {/* Subtle radial glow in top-right */}
+            <div
+                className="pointer-events-none absolute -right-12 -top-12 h-[140px] w-[140px] rounded-full opacity-60"
+                style={{
+                    background:
+                        "radial-gradient(circle, rgba(255,107,107,0.08) 0%, rgba(255,107,107,0) 70%)",
+                }}
+                aria-hidden="true"
+            />
+            
             <div className="flex items-center justify-between mb-4">
                 <span className="mono-kicker text-coral-red">[{label}]</span>
                 <div className="flex items-center gap-2">
@@ -72,6 +88,6 @@ export function BalanceCard({
                     </span>
                 </div>
             </div>
-        </div>
+        </motion.div>
     );
 }

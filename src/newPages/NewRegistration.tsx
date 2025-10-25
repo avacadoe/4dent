@@ -11,6 +11,7 @@ import {
     useWaitForTransactionReceipt,
 } from "wagmi";
 import { avalancheFuji } from "wagmi/chains";
+import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "react-toastify";
 import { AiOutlineCheckCircle, AiOutlineDownload } from "react-icons/ai";
 import { NewLayout, LoadingSpinner, StatusIndicator } from "../newComponents";
@@ -214,8 +215,24 @@ export function NewRegistration({ onNavigate, mode }: NewRegistrationProps) {
         <NewLayout onNavigate={onNavigate} currentPage="registration">
             <div className="max-w-4xl mx-auto space-y-6">
                 {/* Header */}
-                <div className="text-center">
-                    <h1 className="text-5xl font-bold text-coral-red mb-4">
+                <div className="text-center relative">
+                    {/* Radial glow behind heading */}
+                    <div
+                        className="pointer-events-none absolute left-1/2 top-0 h-[200px] w-[200px] -translate-x-1/2 -translate-y-4 rounded-full md:h-[260px] md:w-[260px]"
+                        style={{
+                            background:
+                                "radial-gradient(circle, rgba(255,107,107,0.14) 0%, rgba(255,107,107,0) 70%)",
+                        }}
+                        aria-hidden="true"
+                    />
+                    
+                    <h1 
+                        className="relative text-5xl font-bold text-coral-red mb-4"
+                        style={{
+                            fontFamily: "'Scto Grotesk A', Inter, -apple-system, BlinkMacSystemFont, sans-serif",
+                            letterSpacing: "-0.02em",
+                        }}
+                    >
                         Register Your Account
                     </h1>
                     <p className="text-lg text-gray-600">
@@ -225,7 +242,12 @@ export function NewRegistration({ onNavigate, mode }: NewRegistrationProps) {
                 </div>
 
                 {/* Step Progress */}
-                <div className="step-indicator justify-center">
+                <motion.div 
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5, delay: 0.1 }}
+                    className="step-indicator justify-center"
+                >
                     <div className={`step ${step === "generate" ? "active" : isDecryptionKeySet ? "completed" : ""}`}>
                         <div className="step-circle">1</div>
                         <span className="text-sm font-medium">Generate Keys</span>
@@ -240,11 +262,19 @@ export function NewRegistration({ onNavigate, mode }: NewRegistrationProps) {
                         <div className="step-circle">3</div>
                         <span className="text-sm font-medium">Register</span>
                     </div>
-                </div>
+                </motion.div>
 
                 {/* Step 1: Generate Keys */}
-                {!isDecryptionKeySet && (
-                    <div className="frost-card p-8">
+                <AnimatePresence mode="wait">
+                    {!isDecryptionKeySet && (
+                        <motion.div 
+                            key="generate"
+                            initial={{ opacity: 0, x: 20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            exit={{ opacity: 0, x: -20 }}
+                            transition={{ duration: 0.3 }}
+                            className="frost-card p-8"
+                        >
                         <div className="mb-4 flex items-center justify-between">
                             <span className="mono-kicker text-coral-red">
                                 [ STEP 1: GENERATE ENCRYPTION KEYS ]
@@ -275,12 +305,19 @@ export function NewRegistration({ onNavigate, mode }: NewRegistrationProps) {
                         >
                             Generate Keys
                         </button>
-                    </div>
+                    </motion.div>
                 )}
 
                 {/* Step 2: Backup Keys */}
                 {isDecryptionKeySet && step === "backup" && (
-                    <div className="frost-card p-8">
+                    <motion.div 
+                        key="backup"
+                        initial={{ opacity: 0, x: 20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        exit={{ opacity: 0, x: -20 }}
+                        transition={{ duration: 0.3 }}
+                        className="frost-card p-8"
+                    >
                         <div className="mb-4 flex items-center justify-between">
                             <span className="mono-kicker text-emerald-green">
                                 [ STEP 2: BACKUP YOUR KEYS ]
@@ -342,12 +379,19 @@ export function NewRegistration({ onNavigate, mode }: NewRegistrationProps) {
                                 I've Saved My Keys →
                             </button>
                         </div>
-                    </div>
+                    </motion.div>
                 )}
 
                 {/* Step 3: Register */}
                 {isDecryptionKeySet && step === "register" && (
-                    <div className="frost-card p-8">
+                    <motion.div 
+                        key="register"
+                        initial={{ opacity: 0, x: 20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        exit={{ opacity: 0, x: -20 }}
+                        transition={{ duration: 0.3 }}
+                        className="frost-card p-8"
+                    >
                         <div className="mb-4 flex items-center justify-between">
                             <span className="mono-kicker text-emerald-green">
                                 [ STEP 3: REGISTER ON-CHAIN ]
@@ -403,8 +447,9 @@ export function NewRegistration({ onNavigate, mode }: NewRegistrationProps) {
                                 </button>
                             </div>
                         )}
-                    </div>
+                    </motion.div>
                 )}
+                </AnimatePresence>
 
                 {/* Back button */}
                 {step !== "generate" && !isRegistering && (

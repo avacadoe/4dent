@@ -14,7 +14,7 @@ export default {
       },
       fontFamily: {
         mono: ['"Anonymous Pro"', '"Roboto Mono"', "monospace"],
-        sans: ['"Open Sans"', "sans-serif"],
+        sans: ['"Scto Grotesk A"', 'Inter', '-apple-system', 'BlinkMacSystemFont', '"Segoe UI"', "sans-serif"],
       },
       animation: {
         "neon-glow": "neon-glow 1.5s ease-in-out infinite alternate",

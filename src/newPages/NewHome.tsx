@@ -5,6 +5,7 @@ import {
 } from "@avalabs/eerc-sdk";
 import { useAccount, usePublicClient, useWalletClient } from "wagmi";
 import { avalancheFuji } from "wagmi/chains";
+import { motion } from "framer-motion";
 import { NewLayout } from "../newComponents";
 import { CIRCUIT_CONFIG, CONTRACTS, URLS } from "../config/contracts";
 import "../newStyles.css";
@@ -80,66 +81,128 @@ export function NewHome({ onNavigate, mode = "standalone" }: NewHomeProps) {
         <NewLayout onNavigate={onNavigate} currentPage="home">
             <div className="space-y-16">
                 {/* Hero Section */}
-                <section className="text-center py-12">
-                    <h1
-                        className="text-6xl md:text-8xl font-bold leading-[1.02] mb-6"
-                        style={{
-                            letterSpacing: "-0.02em",
-                            color: "#FF6B6B",
-                            fontFamily:
-                                "'Scto Grotesk A', Inter, -apple-system, BlinkMacSystemFont, sans-serif",
-                        }}
-                    >
-                        The Privacy Wallet
-                        <br />
-                        For Your Crypto
-                    </h1>
-
+                <motion.section 
+                    initial={{ opacity: 0, y: 30 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.6 }}
+                    className="relative text-center py-12"
+                >
+                    {/* Subtle red gradient tint */}
+                    <div className="absolute inset-0 bg-gradient-to-b from-coral-red/[0.03] via-transparent to-transparent -mx-8 -my-4 pointer-events-none" />
+                    
+                    {/* Radial glow behind heading */}
                     <div
-                        className="mt-8 space-y-2 text-[14px] font-semibold uppercase tracking-[0.08em] text-coral-red"
+                        className="pointer-events-none absolute left-1/2 top-8 h-[300px] w-[300px] -translate-x-1/2 rounded-full md:h-[400px] md:w-[400px] lg:h-[500px] lg:w-[500px]"
                         style={{
-                            fontFamily:
-                                "JetBrains Mono, Monaco, 'Courier New', monospace",
+                            background:
+                                "radial-gradient(circle, rgba(255,107,107,0.15) 0%, rgba(255,107,107,0) 70%)",
                         }}
-                    >
-                        <p>PRIVACY FIRST TRADING</p>
-                        <p>100% ANONYMOUS</p>
-                        <p>ZERO-KNOWLEDGE PROOFS</p>
-                    </div>
+                        aria-hidden="true"
+                    />
+                    
+                    <div className="relative">
+                        <motion.h1
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.6, delay: 0.2 }}
+                            className="text-6xl md:text-8xl font-bold leading-[1.02] mb-6"
+                            style={{
+                                letterSpacing: "-0.02em",
+                                color: "#FF6B6B",
+                                fontFamily:
+                                    "'Scto Grotesk A', Inter, -apple-system, BlinkMacSystemFont, sans-serif",
+                            }}
+                        >
+                            The Privacy Wallet
+                            <br />
+                            For Your Crypto
+                        </motion.h1>
 
-                    <div className="mt-12 flex flex-col sm:flex-row gap-4 justify-center items-center">
-                        <button
-                            type="button"
-                            onClick={handleLaunchApp}
-                            className="btn-primary text-base px-8 py-4"
+                        <motion.div
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            transition={{ duration: 0.6, delay: 0.4 }}
+                            className="mt-8 space-y-2 text-[14px] font-semibold uppercase tracking-[0.08em] text-coral-red"
+                            style={{
+                                fontFamily:
+                                    "JetBrains Mono, Monaco, 'Courier New', monospace",
+                            }}
                         >
-                            Launch App →
-                        </button>
-                        <button
-                            type="button"
-                            onClick={handleGetStarted}
-                            className="btn-secondary text-base px-8 py-4"
+                            <p>PRIVACY FIRST TRADING</p>
+                            <p>100% ANONYMOUS</p>
+                            <p>ZERO-KNOWLEDGE PROOFS</p>
+                        </motion.div>
+
+                        <motion.div 
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.6, delay: 0.6 }}
+                            className="mt-12 flex flex-col sm:flex-row gap-4 justify-center items-center"
                         >
-                            {isConnected && isRegistered ? "Go to Dashboard" : "Get Started"}
-                        </button>
+                            <button
+                                type="button"
+                                onClick={handleLaunchApp}
+                                className="btn-primary text-base px-8 py-4"
+                            >
+                                Launch App →
+                            </button>
+                            <button
+                                type="button"
+                                onClick={handleGetStarted}
+                                className="btn-secondary text-base px-8 py-4"
+                            >
+                                {isConnected && isRegistered ? "Go to Dashboard" : "Get Started"}
+                            </button>
+                        </motion.div>
                     </div>
-                </section>
+                </motion.section>
 
                 {/* Features Grid */}
-                <section className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <motion.section 
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 0.6, delay: 0.3 }}
+                    className="grid grid-cols-1 md:grid-cols-3 gap-6"
+                >
                     {features.map((feature, index) => (
-                        <FeatureCard key={index} {...feature} />
+                        <FeatureCard key={index} {...feature} index={index} />
                     ))}
-                </section>
+                </motion.section>
 
                 {/* Learning Tools */}
-                <section>
-                    <h2 className="text-4xl font-bold text-coral-red mb-8 text-center">
-                        Learn the Technology
-                    </h2>
-                    <p className="text-center text-gray-600 mb-8 max-w-2xl mx-auto">
-                        Explore the cryptographic primitives that power encrypted transactions
-                    </p>
+                <motion.section 
+                    initial={{ opacity: 0, y: 30 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.6, delay: 0.5 }}
+                    className="relative"
+                >
+                    {/* Subtle red tint background */}
+                    <div className="absolute inset-0 bg-coral-red/[0.02] rounded-lg -mx-4 -my-8 pointer-events-none" />
+                    
+                    {/* Radial glow behind heading */}
+                    <div
+                        className="pointer-events-none absolute left-1/2 top-0 h-[200px] w-[200px] -translate-x-1/2 rounded-full md:h-[280px] md:w-[280px]"
+                        style={{
+                            background:
+                                "radial-gradient(circle, rgba(255,107,107,0.12) 0%, rgba(255,107,107,0) 70%)",
+                        }}
+                        aria-hidden="true"
+                    />
+                    
+                    <div className="relative py-8">
+                        <h2 
+                            className="text-4xl md:text-5xl font-bold text-coral-red mb-4 text-center"
+                            style={{
+                                fontFamily: "'Scto Grotesk A', Inter, -apple-system, BlinkMacSystemFont, sans-serif",
+                                letterSpacing: "-0.02em",
+                            }}
+                        >
+                            Learn the Technology
+                        </h2>
+                        <p className="text-center text-gray-600 mb-8 max-w-2xl mx-auto">
+                            Explore the cryptographic primitives that power encrypted transactions
+                        </p>
+                    </div>
                     
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                         <button
@@ -150,7 +213,13 @@ export function NewHome({ onNavigate, mode = "standalone" }: NewHomeProps) {
                             <div className="mono-kicker text-coral-red mb-3">
                                 [ CRYPTOGRAPHY ]
                             </div>
-                            <h3 className="text-2xl font-bold text-black mb-3 group-hover:text-coral-red transition-colors">
+                            <h3 
+                                className="text-2xl font-bold text-black mb-3 group-hover:text-coral-red transition-colors"
+                                style={{
+                                    fontFamily: "'Scto Grotesk A', Inter, -apple-system, BlinkMacSystemFont, sans-serif",
+                                    letterSpacing: "-0.01em",
+                                }}
+                            >
                                 Elliptic Curves
                             </h3>
                             <p className="text-gray-600 mb-4">
@@ -169,7 +238,13 @@ export function NewHome({ onNavigate, mode = "standalone" }: NewHomeProps) {
                             <div className="mono-kicker text-coral-red mb-3">
                                 [ ZK-FRIENDLY ]
                             </div>
-                            <h3 className="text-2xl font-bold text-black mb-3 group-hover:text-coral-red transition-colors">
+                            <h3 
+                                className="text-2xl font-bold text-black mb-3 group-hover:text-coral-red transition-colors"
+                                style={{
+                                    fontFamily: "'Scto Grotesk A', Inter, -apple-system, BlinkMacSystemFont, sans-serif",
+                                    letterSpacing: "-0.01em",
+                                }}
+                            >
                                 Hash Functions
                             </h3>
                             <p className="text-gray-600 mb-4">
@@ -188,7 +263,13 @@ export function NewHome({ onNavigate, mode = "standalone" }: NewHomeProps) {
                             <div className="mono-kicker text-coral-red mb-3">
                                 [ ENCRYPTION ]
                             </div>
-                            <h3 className="text-2xl font-bold text-black mb-3 group-hover:text-coral-red transition-colors">
+                            <h3 
+                                className="text-2xl font-bold text-black mb-3 group-hover:text-coral-red transition-colors"
+                                style={{
+                                    fontFamily: "'Scto Grotesk A', Inter, -apple-system, BlinkMacSystemFont, sans-serif",
+                                    letterSpacing: "-0.01em",
+                                }}
+                            >
                                 Poseidon Cipher
                             </h3>
                             <p className="text-gray-600 mb-4">
@@ -199,11 +280,22 @@ export function NewHome({ onNavigate, mode = "standalone" }: NewHomeProps) {
                             </span>
                         </button>
                     </div>
-                </section>
+                </motion.section>
 
                 {/* How it Works */}
-                <section className="frost-card p-8 md:p-12">
-                    <h2 className="text-4xl font-bold text-coral-red mb-8">
+                <motion.section 
+                    initial={{ opacity: 0, y: 30 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.6, delay: 0.7 }}
+                    className="frost-card p-8 md:p-12"
+                >
+                    <h2 
+                        className="text-4xl md:text-5xl font-bold text-coral-red mb-8"
+                        style={{
+                            fontFamily: "'Scto Grotesk A', Inter, -apple-system, BlinkMacSystemFont, sans-serif",
+                            letterSpacing: "-0.02em",
+                        }}
+                    >
                         How It Works
                     </h2>
 
@@ -229,7 +321,7 @@ export function NewHome({ onNavigate, mode = "standalone" }: NewHomeProps) {
                             description="Convert your encrypted tokens back to public tokens anytime"
                         />
                     </div>
-                </section>
+                </motion.section>
             </div>
         </NewLayout>
     );
@@ -240,9 +332,10 @@ interface FeatureCardProps {
     title: string;
     description: string;
     accent: "green" | "orange" | "yellow";
+    index: number;
 }
 
-function FeatureCard({ tag, title, description, accent }: FeatureCardProps) {
+function FeatureCard({ tag, title, description, accent, index }: FeatureCardProps) {
     const accentColors = {
         green: "#00A667",
         orange: "#FF6B6B",
@@ -252,7 +345,13 @@ function FeatureCard({ tag, title, description, accent }: FeatureCardProps) {
     const color = accentColors[accent];
 
     return (
-        <article className="frost-card p-6 md:p-7 lg:p-8 interactive-card">
+        <motion.article 
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.1 * index }}
+            whileHover={{ y: -5, transition: { duration: 0.2 } }}
+            className="frost-card p-6 md:p-7 lg:p-8 interactive-card"
+        >
             <div className="mb-4 md:mb-5 flex items-center justify-between">
                 <span
                     className="mono-kicker"
@@ -279,14 +378,19 @@ function FeatureCard({ tag, title, description, accent }: FeatureCardProps) {
                 </span>
             </div>
 
-            <h3 className="text-[22px] leading-[1.15] md:text-[24px] lg:text-[26px] font-semibold text-balance">
+            <h3 className="text-[22px] leading-[1.15] md:text-[24px] lg:text-[26px] font-semibold text-balance"
+                style={{
+                    fontFamily: "'Scto Grotesk A', Inter, -apple-system, BlinkMacSystemFont, sans-serif",
+                    letterSpacing: "-0.01em",
+                }}
+            >
                 {title}
             </h3>
 
-            <p className="mt-3 text-[12px] md:text-[13px] leading-[1.45] text-muted-foreground max-w-[58ch]">
+            <p className="mt-3 text-[12px] md:text-[13px] leading-[1.45] text-black max-w-[58ch]">
                 {description}
             </p>
-        </article>
+        </motion.article>
     );
 }
 
@@ -306,7 +410,13 @@ function StepCard({ number, title, description }: StepCardProps) {
                 {number}
             </div>
             <div className="relative">
-                <h3 className="text-xl font-semibold text-black mb-2">
+                <h3 
+                    className="text-xl font-semibold text-black mb-2"
+                    style={{
+                        fontFamily: "'Scto Grotesk A', Inter, -apple-system, BlinkMacSystemFont, sans-serif",
+                        letterSpacing: "-0.01em",
+                    }}
+                >
                     {title}
                 </h3>
                 <p className="text-sm text-gray-600">{description}</p>

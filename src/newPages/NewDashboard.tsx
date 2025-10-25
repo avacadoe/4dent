@@ -11,6 +11,7 @@ import {
 } from "wagmi";
 import { avalancheFuji } from "wagmi/chains";
 import { formatUnits } from "viem";
+import { motion } from "framer-motion";
 import { toast } from "react-toastify";
 import { AiOutlineArrowDown, AiOutlineArrowUp, AiOutlineSwap } from "react-icons/ai";
 import { NewLayout, BalanceCard, StatusIndicator } from "../newComponents";
@@ -118,8 +119,24 @@ export function NewDashboard({ onNavigate, mode }: NewDashboardProps) {
         <NewLayout onNavigate={onNavigate} currentPage="dashboard">
             <div className="space-y-8">
                 {/* Header */}
-                <div>
-                    <h1 className="text-5xl font-bold text-coral-red mb-2">
+                <div className="relative">
+                    {/* Radial glow behind heading */}
+                    <div
+                        className="pointer-events-none absolute left-0 top-0 h-[180px] w-[180px] -translate-y-8 rounded-full md:h-[220px] md:w-[220px]"
+                        style={{
+                            background:
+                                "radial-gradient(circle, rgba(255,107,107,0.14) 0%, rgba(255,107,107,0) 70%)",
+                        }}
+                        aria-hidden="true"
+                    />
+                    
+                    <h1 
+                        className="relative text-5xl font-bold text-coral-red mb-2"
+                        style={{
+                            fontFamily: "'Scto Grotesk A', Inter, -apple-system, BlinkMacSystemFont, sans-serif",
+                            letterSpacing: "-0.02em",
+                        }}
+                    >
                         Dashboard
                     </h1>
                     <p className="text-lg text-gray-600">
@@ -183,7 +200,12 @@ export function NewDashboard({ onNavigate, mode }: NewDashboardProps) {
                 </div>
 
                 {/* Quick Actions */}
-                <div className="frost-card p-8">
+                <motion.div 
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5, delay: 0.2 }}
+                    className="frost-card p-8"
+                >
                     <span className="mono-kicker text-coral-red mb-6 block">
                         [ QUICK ACTIONS ]
                     </span>
@@ -211,7 +233,7 @@ export function NewDashboard({ onNavigate, mode }: NewDashboardProps) {
                             color="#C4A600"
                         />
                     </div>
-                </div>
+                </motion.div>
 
                 {/* Privacy Notice */}
                 <StatusIndicator
@@ -255,9 +277,11 @@ interface ActionCardProps {
 
 function ActionCard({ icon, title, description, onClick, color }: ActionCardProps) {
     return (
-        <button
+        <motion.button
             type="button"
             onClick={onClick}
+            whileHover={{ y: -5, transition: { duration: 0.2 } }}
+            whileTap={{ scale: 0.98 }}
             className="frost-card p-6 interactive-card text-left hover:shadow-lg transition-all"
             style={{
                 borderColor: `${color}20`,
@@ -271,6 +295,6 @@ function ActionCard({ icon, title, description, onClick, color }: ActionCardProp
             </div>
             <h3 className="text-lg font-semibold mb-2 text-black">{title}</h3>
             <p className="text-sm text-gray-600">{description}</p>
-        </button>
+        </motion.button>
     );
 }

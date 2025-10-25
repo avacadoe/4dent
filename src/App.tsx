@@ -7,7 +7,11 @@ import {
 	NewDeposit,
 	NewWithdraw,
 	NewTransfer,
+	NewECC,
+	NewHashes,
+	NewPoseidon,
 } from "./newPages";
+import { RegistrationCheck } from "./newComponents";
 
 // Lazy load page components
 const ECC = lazy(() =>
@@ -36,22 +40,36 @@ export function App() {
 	const [selectedPage, setSelectedPage] = useState<
 		"hashes" | "ecc" | "EERC" | "poseidon"
 	>("EERC");
-	const [uiVersion, setUiVersion] = useState<"classic" | "new">("classic");
-	const [newPage, setNewPage] = useState<
-		"home" | "registration" | "dashboard" | "deposit" | "withdraw" | "transfer"
-	>("home");
+	
+	type NewPageType = "home" | "registration" | "dashboard" | "deposit" | "withdraw" | "transfer" | "ecc" | "hashes" | "poseidon";
+	
+	// Load UI version and page from localStorage on mount
+	const [uiVersion, setUiVersion] = useState<"classic" | "new">(() => {
+		return (localStorage.getItem("uiVersion") as "classic" | "new") || "classic";
+	});
+	
+	const [newPage, setNewPage] = useState<NewPageType>(() => {
+		const saved = localStorage.getItem("currentPage") as NewPageType | null;
+		return saved || "home";
+	});
+	
 	const [mode] = useState<"standalone" | "converter">("standalone");
 
+	// Save UI version to localStorage when it changes
+	const handleSetUiVersion = (version: "classic" | "new") => {
+		setUiVersion(version);
+		localStorage.setItem("uiVersion", version);
+		// Reset to home when switching UI versions
+		if (version === "new") {
+			setNewPage("home");
+			localStorage.setItem("currentPage", "home");
+		}
+	};
+
 	const handleNewPageNavigate = (page: string) => {
-		setNewPage(
-			page as
-				| "home"
-				| "registration"
-				| "dashboard"
-				| "deposit"
-				| "withdraw"
-				| "transfer"
-		);
+		const validPage = page as NewPageType;
+		setNewPage(validPage);
+		localStorage.setItem("currentPage", validPage);
 	};
 
 	// If new UI is selected, render new pages
@@ -60,25 +78,74 @@ export function App() {
 		
 		switch (newPage) {
 			case "home":
-				PageComponent = <NewHome onNavigate={handleNewPageNavigate} />;
+				PageComponent = (
+					<RegistrationCheck onNavigate={handleNewPageNavigate} currentPage="home" mode={mode}>
+						<NewHome onNavigate={handleNewPageNavigate} mode={mode} />
+					</RegistrationCheck>
+				);
 				break;
 			case "registration":
-				PageComponent = <NewRegistration onNavigate={handleNewPageNavigate} mode={mode} />;
+				PageComponent = (
+					<RegistrationCheck onNavigate={handleNewPageNavigate} currentPage="registration" mode={mode}>
+						<NewRegistration onNavigate={handleNewPageNavigate} mode={mode} />
+					</RegistrationCheck>
+				);
 				break;
 			case "dashboard":
-				PageComponent = <NewDashboard onNavigate={handleNewPageNavigate} mode={mode} />;
+				PageComponent = (
+					<RegistrationCheck onNavigate={handleNewPageNavigate} currentPage="dashboard" mode={mode}>
+						<NewDashboard onNavigate={handleNewPageNavigate} mode={mode} />
+					</RegistrationCheck>
+				);
 				break;
 			case "deposit":
-				PageComponent = <NewDeposit onNavigate={handleNewPageNavigate} mode={mode} />;
+				PageComponent = (
+					<RegistrationCheck onNavigate={handleNewPageNavigate} currentPage="deposit" mode={mode}>
+						<NewDeposit onNavigate={handleNewPageNavigate} mode={mode} />
+					</RegistrationCheck>
+				);
 				break;
 			case "withdraw":
-				PageComponent = <NewWithdraw onNavigate={handleNewPageNavigate} mode={mode} />;
+				PageComponent = (
+					<RegistrationCheck onNavigate={handleNewPageNavigate} currentPage="withdraw" mode={mode}>
+						<NewWithdraw onNavigate={handleNewPageNavigate} mode={mode} />
+					</RegistrationCheck>
+				);
 				break;
 			case "transfer":
-				PageComponent = <NewTransfer onNavigate={handleNewPageNavigate} mode={mode} />;
+				PageComponent = (
+					<RegistrationCheck onNavigate={handleNewPageNavigate} currentPage="transfer" mode={mode}>
+						<NewTransfer onNavigate={handleNewPageNavigate} mode={mode} />
+					</RegistrationCheck>
+				);
+				break;
+			case "ecc":
+				PageComponent = (
+					<RegistrationCheck onNavigate={handleNewPageNavigate} currentPage="ecc" mode={mode}>
+						<NewECC onNavigate={handleNewPageNavigate} />
+					</RegistrationCheck>
+				);
+				break;
+			case "hashes":
+				PageComponent = (
+					<RegistrationCheck onNavigate={handleNewPageNavigate} currentPage="hashes" mode={mode}>
+						<NewHashes onNavigate={handleNewPageNavigate} />
+					</RegistrationCheck>
+				);
+				break;
+			case "poseidon":
+				PageComponent = (
+					<RegistrationCheck onNavigate={handleNewPageNavigate} currentPage="poseidon" mode={mode}>
+						<NewPoseidon onNavigate={handleNewPageNavigate} />
+					</RegistrationCheck>
+				);
 				break;
 			default:
-				PageComponent = <NewHome onNavigate={handleNewPageNavigate} />;
+				PageComponent = (
+					<RegistrationCheck onNavigate={handleNewPageNavigate} currentPage="home" mode={mode}>
+						<NewHome onNavigate={handleNewPageNavigate} mode={mode} />
+					</RegistrationCheck>
+				);
 		}
 		
 		return (
@@ -88,7 +155,7 @@ export function App() {
 				{/* Toggle back to classic UI */}
 				<button
 					type="button"
-					onClick={() => setUiVersion("classic")}
+					onClick={() => handleSetUiVersion("classic")}
 					className="fixed bottom-6 right-6 z-50 btn-secondary shadow-lg"
 					style={{
 						fontFamily: "JetBrains Mono, Monaco, monospace",
@@ -152,7 +219,7 @@ export function App() {
 				<div className="p-4 border-t border-cyber-green/30">
 					<button
 						type="button"
-						onClick={() => setUiVersion("new")}
+						onClick={() => handleSetUiVersion("new")}
 						className="w-full px-4 py-3 bg-cyber-green text-cyber-dark font-mono font-bold rounded hover:bg-cyber-green/80 transition-colors"
 					>
 						Try New UI →

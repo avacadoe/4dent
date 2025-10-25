@@ -1,5 +1,36 @@
 /* New UI Styles - Minimal Clean Design */
 
+/* Global font settings */
+* {
+  font-family: 'Scto Grotesk A', Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-weight: 300; /* Thin/Light weight */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Override for specific elements that need different weights */
+b, strong {
+  font-weight: 500; /* Medium weight instead of bold */
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 400; /* Regular weight for headings */
+  letter-spacing: -0.02em;
+}
+
+/* Override Tailwind's font-bold to use lighter weight */
+.font-bold {
+  font-weight: 400 !important; /* Regular weight instead of 700 */
+}
+
+.font-semibold {
+  font-weight: 400 !important; /* Regular weight instead of 600 */
+}
+
+.font-medium {
+  font-weight: 350 !important; /* Light-medium weight instead of 500 */
+}
+
 /* Dotted background pattern */
 .dotted-bg {
   background-color: #ECECEC;
@@ -22,7 +53,7 @@
   font-size: 10px;
   text-transform: uppercase;
   letter-spacing: 0.18em;
-  font-weight: 600;
+  font-weight: 400; /* Regular weight instead of 600 */
 }
 
 /* Corner badge with arrow icon */
@@ -101,7 +132,7 @@
   font-size: 12px;
   text-transform: uppercase;
   letter-spacing: 0.18em;
-  font-weight: 600;
+  font-weight: 400; /* Regular weight instead of 600 */
   padding: 8px 16px;
   border-radius: 2px;
   box-shadow: 0 10px 30px rgba(255, 107, 107, 0.35);
@@ -127,7 +158,7 @@
   font-size: 12px;
   text-transform: uppercase;
   letter-spacing: 0.18em;
-  font-weight: 600;
+  font-weight: 400; /* Regular weight instead of 600 */
   padding: 8px 16px;
   border-radius: 2px;
   transition: all 0.2s ease;
@@ -146,7 +177,7 @@
   font-size: 12px;
   text-transform: uppercase;
   letter-spacing: 0.18em;
-  font-weight: 600;
+  font-weight: 400; /* Regular weight instead of 600 */
   padding: 12px 24px;
   border-radius: 10px;
   box-shadow: 0 14px 36px rgba(0, 166, 103, 0.35);
@@ -188,7 +219,7 @@
 /* Large amount input */
 .amount-input-large {
   font-size: 32px;
-  font-weight: 600;
+  font-weight: 400; /* Regular weight instead of 600 */
   border: none;
   background: transparent;
   outline: none;
@@ -299,7 +330,7 @@
   align-items: center;
   justify-content: center;
   font-size: 14px;
-  font-weight: 600;
+  font-weight: 400; /* Regular weight instead of 600 */
   transition: all 0.2s ease;
 }
 
@@ -329,7 +360,7 @@
 .countdown-timer {
   font-family: 'JetBrains Mono', Monaco, 'Courier New', monospace;
   font-size: 48px;
-  font-weight: 700;
+  font-weight: 400; /* Regular weight instead of 700 */
   color: #FF6B6B;
   text-align: center;
 }

@@ -166,10 +166,23 @@ export function NewWithdraw({ onNavigate, mode }: NewWithdrawProps) {
 
     return (
         <NewLayout onNavigate={onNavigate} currentPage="withdraw">
-            <div className="max-w-6xl mx-auto space-y-6">
+            {/* Light red tint background */}
+            <div className="absolute inset-0 bg-coral-red/[0.02] -mx-8 -my-8 pointer-events-none" />
+            
+            <div className="max-w-6xl mx-auto space-y-6 relative">
                 {/* Header */}
-                <div className="mb-4 flex items-center justify-between">
-                    <div>
+                <div className="mb-4 flex items-center justify-between relative">
+                    {/* Radial glow behind heading */}
+                    <div
+                        className="pointer-events-none absolute left-0 top-0 h-[160px] w-[160px] -translate-y-6 rounded-full md:h-[200px] md:w-[200px]"
+                        style={{
+                            background:
+                                "radial-gradient(circle, rgba(255,107,107,0.12) 0%, rgba(255,107,107,0) 70%)",
+                        }}
+                        aria-hidden="true"
+                    />
+                    
+                    <div className="relative">
                         <div className="flex items-center gap-2 text-xs uppercase tracking-[0.18em] text-gray-500 mb-2">
                             <span>Withdraw</span>
                             <span aria-hidden>•</span>
@@ -177,7 +190,13 @@ export function NewWithdraw({ onNavigate, mode }: NewWithdrawProps) {
                                 private → public
                             </span>
                         </div>
-                        <h1 className="text-5xl font-bold text-coral-red">
+                        <h1 
+                            className="text-5xl font-bold text-coral-red"
+                            style={{
+                                fontFamily: "'Scto Grotesk A', Inter, -apple-system, BlinkMacSystemFont, sans-serif",
+                                letterSpacing: "-0.02em",
+                            }}
+                        >
                             Withdraw Tokens
                         </h1>
                     </div>
