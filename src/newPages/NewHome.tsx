@@ -1,11 +1,56 @@
+import {
+    type CompatiblePublicClient,
+    type CompatibleWalletClient,
+    useEERC,
+} from "@avalabs/eerc-sdk";
+import { useAccount, usePublicClient, useWalletClient } from "wagmi";
+import { avalancheFuji } from "wagmi/chains";
 import { NewLayout } from "../newComponents";
+import { CIRCUIT_CONFIG, CONTRACTS, URLS } from "../config/contracts";
 import "../newStyles.css";
 
 interface NewHomeProps {
     onNavigate: (page: string) => void;
+    mode?: "standalone" | "converter";
 }
 
-export function NewHome({ onNavigate }: NewHomeProps) {
+export function NewHome({ onNavigate, mode = "standalone" }: NewHomeProps) {
+    const { isConnected } = useAccount();
+    const publicClient = usePublicClient({ chainId: avalancheFuji.id });
+    const { data: walletClient } = useWalletClient();
+
+    // Only initialize useEERC if wallet is connected
+    const { isRegistered } = useEERC(
+        publicClient as CompatiblePublicClient,
+        walletClient as CompatibleWalletClient,
+        mode === "converter"
+            ? CONTRACTS.EERC_CONVERTER
+            : CONTRACTS.EERC_STANDALONE,
+        URLS,
+        CIRCUIT_CONFIG
+    );
+
+    // Smart navigation: Check registration status and navigate accordingly
+    const handleGetStarted = () => {
+        if (!isConnected) {
+            // If not connected, go to registration page where they'll be prompted to connect
+            onNavigate("registration");
+            return;
+        }
+
+        if (isRegistered) {
+            // Already registered, go straight to dashboard
+            onNavigate("dashboard");
+        } else {
+            // Not registered, go to registration flow
+            onNavigate("registration");
+        }
+    };
+
+    // Auto-redirect registered users who click "Launch App"
+    const handleLaunchApp = () => {
+        onNavigate("dashboard");
+    };
 
     const features = [
         {
@@ -32,7 +77,7 @@ export function NewHome({ onNavigate }: NewHomeProps) {
     ];
 
     return (
-        <NewLayout>
+        <NewLayout onNavigate={onNavigate} currentPage="home">
             <div className="space-y-16">
                 {/* Hero Section */}
                 <section className="text-center py-12">
@@ -65,17 +110,17 @@ export function NewHome({ onNavigate }: NewHomeProps) {
                     <div className="mt-12 flex flex-col sm:flex-row gap-4 justify-center items-center">
                         <button
                             type="button"
-                            onClick={() => onNavigate("dashboard")}
+                            onClick={handleLaunchApp}
                             className="btn-primary text-base px-8 py-4"
                         >
                             Launch App →
                         </button>
                         <button
                             type="button"
-                            onClick={() => onNavigate("registration")}
+                            onClick={handleGetStarted}
                             className="btn-secondary text-base px-8 py-4"
                         >
-                            Get Started
+                            {isConnected && isRegistered ? "Go to Dashboard" : "Get Started"}
                         </button>
                     </div>
                 </section>
@@ -85,6 +130,75 @@ export function NewHome({ onNavigate }: NewHomeProps) {
                     {features.map((feature, index) => (
                         <FeatureCard key={index} {...feature} />
                     ))}
+                </section>
+
+                {/* Learning Tools */}
+                <section>
+                    <h2 className="text-4xl font-bold text-coral-red mb-8 text-center">
+                        Learn the Technology
+                    </h2>
+                    <p className="text-center text-gray-600 mb-8 max-w-2xl mx-auto">
+                        Explore the cryptographic primitives that power encrypted transactions
+                    </p>
+                    
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <button
+                            type="button"
+                            onClick={() => onNavigate("ecc")}
+                            className="frost-card p-8 text-left hover:border-coral-red/40 transition-all group"
+                        >
+                            <div className="mono-kicker text-coral-red mb-3">
+                                [ CRYPTOGRAPHY ]
+                            </div>
+                            <h3 className="text-2xl font-bold text-black mb-3 group-hover:text-coral-red transition-colors">
+                                Elliptic Curves
+                            </h3>
+                            <p className="text-gray-600 mb-4">
+                                Explore Baby JubJub elliptic curve operations, point arithmetic, and ElGamal encryption
+                            </p>
+                            <span className="text-coral-red font-mono text-sm">
+                                Explore ECC →
+                            </span>
+                        </button>
+
+                        <button
+                            type="button"
+                            onClick={() => onNavigate("hashes")}
+                            className="frost-card p-8 text-left hover:border-coral-red/40 transition-all group"
+                        >
+                            <div className="mono-kicker text-coral-red mb-3">
+                                [ ZK-FRIENDLY ]
+                            </div>
+                            <h3 className="text-2xl font-bold text-black mb-3 group-hover:text-coral-red transition-colors">
+                                Hash Functions
+                            </h3>
+                            <p className="text-gray-600 mb-4">
+                                Try Poseidon and MiMC hash functions optimized for zero-knowledge proofs
+                            </p>
+                            <span className="text-coral-red font-mono text-sm">
+                                Try Hashes →
+                            </span>
+                        </button>
+
+                        <button
+                            type="button"
+                            onClick={() => onNavigate("poseidon")}
+                            className="frost-card p-8 text-left hover:border-coral-red/40 transition-all group"
+                        >
+                            <div className="mono-kicker text-coral-red mb-3">
+                                [ ENCRYPTION ]
+                            </div>
+                            <h3 className="text-2xl font-bold text-black mb-3 group-hover:text-coral-red transition-colors">
+                                Poseidon Cipher
+                            </h3>
+                            <p className="text-gray-600 mb-4">
+                                Learn how Poseidon encryption works for privacy-preserving applications
+                            </p>
+                            <span className="text-coral-red font-mono text-sm">
+                                Learn Encryption →
+                            </span>
+                        </button>
+                    </div>
                 </section>
 
                 {/* How it Works */}

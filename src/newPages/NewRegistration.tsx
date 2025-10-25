@@ -176,7 +176,7 @@ export function NewRegistration({ onNavigate, mode }: NewRegistrationProps) {
 
     if (!isConnected) {
         return (
-            <NewLayout>
+            <NewLayout onNavigate={onNavigate} currentPage="registration">
                 <div className="max-w-2xl mx-auto text-center py-20">
                     <h1 className="text-5xl font-bold text-coral-red mb-6">
                         Connect Your Wallet
@@ -189,8 +189,29 @@ export function NewRegistration({ onNavigate, mode }: NewRegistrationProps) {
         );
     }
 
+    // Show loading state while checking registration status
+    if (isRegistered === undefined) {
+        return (
+            <NewLayout onNavigate={onNavigate} currentPage="registration">
+                <div className="max-w-2xl mx-auto text-center py-20">
+                    <div className="flex flex-col items-center gap-6">
+                        <LoadingSpinner size="lg" />
+                        <div>
+                            <h2 className="text-2xl font-semibold text-coral-red mb-2">
+                                Checking Registration Status
+                            </h2>
+                            <p className="text-gray-600">
+                                Please wait while we verify your account...
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </NewLayout>
+        );
+    }
+
     return (
-        <NewLayout>
+        <NewLayout onNavigate={onNavigate} currentPage="registration">
             <div className="max-w-4xl mx-auto space-y-6">
                 {/* Header */}
                 <div className="text-center">

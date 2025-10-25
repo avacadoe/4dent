@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
     type CompatiblePublicClient,
     type CompatibleWalletClient,
@@ -27,6 +27,7 @@ export function NewWithdraw({ onNavigate, mode }: NewWithdrawProps) {
     const [txHash, setTxHash] = useState<`0x${string}`>("" as `0x${string}`);
     const [isProcessing, setIsProcessing] = useState(false);
     const [currentStep, setCurrentStep] = useState<"input" | "prove" | "withdraw">("input");
+    const hasRedirectedRef = useRef(false);
 
     const { address, isConnected } = useAccount();
     const publicClient = usePublicClient({ chainId: avalancheFuji.id });
@@ -83,9 +84,18 @@ export function NewWithdraw({ onNavigate, mode }: NewWithdrawProps) {
         }
     }, [txHash, isSuccess, transactionReceipt, refetchBalance]);
 
+    // Redirect to registration if not registered (only once)
     useEffect(() => {
-        if (!isRegistered && isConnected) {
-            onNavigate("registration");
+        if (!isRegistered && isConnected && !hasRedirectedRef.current) {
+            hasRedirectedRef.current = true;
+            const timer = setTimeout(() => {
+                toast.info("Please complete registration first", {
+                    autoClose: 2000,
+                    toastId: "not-registered-withdraw"
+                });
+                onNavigate("registration");
+            }, 500);
+            return () => clearTimeout(timer);
         }
     }, [isRegistered, isConnected, onNavigate]);
 
@@ -141,7 +151,7 @@ export function NewWithdraw({ onNavigate, mode }: NewWithdrawProps) {
 
     if (!isConnected) {
         return (
-            <NewLayout>
+            <NewLayout onNavigate={onNavigate} currentPage="withdraw">
                 <div className="max-w-2xl mx-auto text-center py-20">
                     <h1 className="text-5xl font-bold text-coral-red mb-6">
                         Connect Your Wallet
@@ -155,7 +165,7 @@ export function NewWithdraw({ onNavigate, mode }: NewWithdrawProps) {
     }
 
     return (
-        <NewLayout>
+        <NewLayout onNavigate={onNavigate} currentPage="withdraw">
             <div className="max-w-6xl mx-auto space-y-6">
                 {/* Header */}
                 <div className="mb-4 flex items-center justify-between">

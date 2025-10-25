@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
     type CompatiblePublicClient,
     type CompatibleWalletClient,
@@ -11,6 +11,7 @@ import {
 } from "wagmi";
 import { avalancheFuji } from "wagmi/chains";
 import { formatUnits } from "viem";
+import { toast } from "react-toastify";
 import { AiOutlineArrowDown, AiOutlineArrowUp, AiOutlineSwap } from "react-icons/ai";
 import { NewLayout, BalanceCard, StatusIndicator } from "../newComponents";
 import { CIRCUIT_CONFIG, CONTRACTS, URLS } from "../config/contracts";
@@ -23,6 +24,7 @@ interface NewDashboardProps {
 
 export function NewDashboard({ onNavigate, mode }: NewDashboardProps) {
     const [isRefreshing, setIsRefreshing] = useState(false);
+    const hasRedirectedRef = useRef(false);
 
     const { address, isConnected } = useAccount();
     const publicClient = usePublicClient({ chainId: avalancheFuji.id });
@@ -50,9 +52,18 @@ export function NewDashboard({ onNavigate, mode }: NewDashboardProps) {
         refetchBalance,
     } = useEncryptedBalance(mode === "converter" ? CONTRACTS.ERC20 : undefined);
 
+    // Redirect to registration if not registered (only once)
     useEffect(() => {
-        if (!isRegistered && isConnected) {
-            onNavigate("registration");
+        if (!isRegistered && isConnected && !hasRedirectedRef.current) {
+            hasRedirectedRef.current = true;
+            const timer = setTimeout(() => {
+                toast.info("Please complete registration first", {
+                    autoClose: 2000,
+                    toastId: "not-registered"
+                });
+                onNavigate("registration");
+            }, 500);
+            return () => clearTimeout(timer);
         }
     }, [isRegistered, isConnected, onNavigate]);
 
@@ -68,7 +79,7 @@ export function NewDashboard({ onNavigate, mode }: NewDashboardProps) {
 
     if (!isConnected) {
         return (
-            <NewLayout>
+            <NewLayout onNavigate={onNavigate} currentPage="dashboard">
                 <div className="max-w-2xl mx-auto text-center py-20">
                     <h1 className="text-5xl font-bold text-coral-red mb-6">
                         Connect Your Wallet
@@ -83,7 +94,7 @@ export function NewDashboard({ onNavigate, mode }: NewDashboardProps) {
 
     if (!isRegistered) {
         return (
-            <NewLayout>
+            <NewLayout onNavigate={onNavigate} currentPage="dashboard">
                 <div className="max-w-2xl mx-auto text-center py-20">
                     <h1 className="text-5xl font-bold text-coral-red mb-6">
                         Registration Required
@@ -104,7 +115,7 @@ export function NewDashboard({ onNavigate, mode }: NewDashboardProps) {
     }
 
     return (
-        <NewLayout>
+        <NewLayout onNavigate={onNavigate} currentPage="dashboard">
             <div className="space-y-8">
                 {/* Header */}
                 <div>
