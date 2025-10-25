@@ -77,7 +77,7 @@ export function NewDeposit({ onNavigate, mode }: NewDepositProps) {
         abi: erc20Abi,
         functionName: "decimals",
         query: { enabled: mode === "converter" },
-    });
+    }) as { data: number | undefined };
 
     const { data: erc20Symbol } = useReadContract({
         address: CONTRACTS.ERC20 as `0x${string}`,

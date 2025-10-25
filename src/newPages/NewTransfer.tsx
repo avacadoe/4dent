@@ -410,7 +410,7 @@ export function NewTransfer({ onNavigate, mode }: NewTransferProps) {
                                 !recipient ||
                                 !isAddress(recipient) ||
                                 !isRecipientRegistered ||
-                                (decryptedBalance && parseUnits(amount || "0", Number(decimals || 18)) > decryptedBalance)
+                                (decryptedBalance ? parseUnits(amount || "0", Number(decimals || 18)) > decryptedBalance : false)
                             }
                             className="btn-success w-full mt-6"
                         >

@@ -1,16 +1,23 @@
 "use client";
 
-import { useState } from "react";
-import Image from "next/image";
-import { FeatureCard } from "@/components/feature-card";
-import { Navbar } from "@/components/navbar";
-import { SectionHeader } from "@/components/section-header";
-import { WaitlistForm } from "@/components/waitlist-form";
+import { FeatureCard } from "../newComponents/feature-card";
+import { Navbar } from "../newComponents/navbar";
+import { WaitlistForm } from "../newComponents/waitlist-form";
 import "./pixel-section.css";
 import "./animated-lines-enhanced.css";
 
+// Simple section header component
+function SectionHeader({ tag, title, description }: { tag: string; title: string; description: string }) {
+  return (
+    <div className="mb-8">
+      <div className="mono-kicker text-coral-red mb-2">{tag}</div>
+      <h2 className="text-3xl font-bold mb-4">{title}</h2>
+      <p className="text-gray-600">{description}</p>
+    </div>
+  );
+}
+
 export default function Home() {
-  const [showOverlay, setShowOverlay] = useState(false);
   const currentYear = new Date().getFullYear();
 
   return (
@@ -112,12 +119,11 @@ export default function Home() {
               {/* Right image */}
               <div className="relative flex min-h-[70vh] items-center justify-center">
                 <div className="relative h-full w-full">
-                  <Image
+                  <img
                     src="/avocado.png"
                     alt="Large grayscale avocado illustration on the right"
                     width={1200}
                     height={1200}
-                    priority
                     className="h-[70vh] w-full object-contain"
                     style={{
                       // approximate halftone look with grayscale + contrast and a touch of desaturation
@@ -155,7 +161,7 @@ export default function Home() {
                 <span style={{ color: "#00A667" }}>EXCLUSIVELY LAUNCHING ON </span>
               </p>
               <div className="mb-4 flex justify-center">
-                <Image
+                <img
                   src="/avax.png"
                   alt="Avalanche logo"
                   width={140}
@@ -282,7 +288,11 @@ export default function Home() {
             </span>
           </div> */}
 
-          <SectionHeader />
+          <SectionHeader 
+            tag="Features"
+            title="Privacy-First Trading"
+            description="Trade with confidence using zero-knowledge proofs"
+          />
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-5 lg:gap-6">
             <FeatureCard
@@ -310,8 +320,6 @@ export default function Home() {
               description="Convert every ERC20 token to its private counterpart and back, seamlessly."
             />
           </div>
-
-          {showOverlay && <div className="ref-overlay" aria-hidden="true" />}
         </section>
 
         {/* Powered by section */}
@@ -335,7 +343,7 @@ export default function Home() {
           <div className="relative mt-8">
             <div className="grid grid-cols-1 overflow-hidden rounded-[4px] border border-black/15 bg-[#F5F5F5]">
               <div className="flex h-24 items-center justify-center border-r border-black/15 bg-[#F0F0F0] md:h-36">
-                <Image
+                <img
                   src="/avax.png"
                   alt="Avalanche logo"
                   width={160}
@@ -349,7 +357,7 @@ export default function Home() {
               </div>
               {/*
               <div className="flex h-24 items-center justify-center border-r border-black/15 bg-[#F0F0F0] md:h-36">
-                <Image
+                <img
                   src="/1inch.png"
                   alt="1inch logo"
                   width={160}
@@ -364,7 +372,7 @@ export default function Home() {
               */}
               {/*
               <div className="flex h-24 items-center justify-center bg-[#F0F0F0] md:h-36">
-                <Image
+                <img
                   src="/self.png"
                   alt="Self logo"
                   width={160}
@@ -409,13 +417,12 @@ export default function Home() {
               </div>
             </div>
             <div className="flex w-full justify-center md:w-1/2">
-              <Image
+              <img
                 src="/wait.png"
                 alt="Illustration of a person waiting to join the Avacado waitlist"
                 width={420}
                 height={420}
                 className="h-auto w-full max-w-[360px] origin-center scale-115 object-contain opacity-95 drop-shadow-[0_20px_50px_rgba(0,0,0,0.1)] transition-transform duration-300 md:max-w-[420px] md:scale-160"
-                priority
               />
             </div>
           </div>

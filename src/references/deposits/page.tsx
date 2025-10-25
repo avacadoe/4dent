@@ -1,9 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import Image from "next/image"
-import { Navbar } from "@/components/navbar"
-import { AlertTriangle } from "lucide-react"
+import { Navbar } from "../../newComponents/navbar"
 
 export default function DepositsPage() {
   const [token, setToken] = useState<"ETH" | "TEST">("ETH")
@@ -26,13 +24,13 @@ export default function DepositsPage() {
         {/* Page background decorative images (fixed to viewport for stability) */}
         <div className="pointer-events-none fixed left-[-170px] bottom-[-30px] z-0 hidden lg:block">
           <div className="relative h-[clamp(600px,90vh,1300px)] w-[clamp(420px,46vw,900px)] opacity-80">
-            <Image src="/sam1.png" alt="Decorative device" fill className="object-contain object-left-bottom" sizes="(min-width: 1024px) 42vw, 0px" />
+            <img src="/sam1.png" alt="Decorative device" className="object-contain object-left-bottom w-full h-full" />
           </div>
         </div>
         {/* Mirrored image on the right */}
         <div className="pointer-events-none fixed right-[-415px] bottom-[-30px] z-0 hidden lg:block">
           <div className="relative h-[clamp(600px,90vh,1300px)] w-[clamp(420px,46vw,900px)] opacity-80">
-            <Image src="/sam1.png" alt="Decorative device mirrored" fill className="object-contain object-right-bottom -scale-x-100" sizes="(min-width: 1024px) 42vw, 0px" />
+            <img src="/sam1.png" alt="Decorative device mirrored" className="object-contain object-right-bottom -scale-x-100 w-full h-full" />
           </div>
         </div>
         <section className="relative mx-auto w-full max-w-[1200px] px-6 py-10 lg:py-14">
@@ -48,7 +46,11 @@ export default function DepositsPage() {
             className="mb-6 flex items-start justify-between gap-4 rounded-[2px] frost-card p-4"
           >
             <div className="flex items-start gap-3">
-              <span className="mt-0.5 inline-flex h-6 w-6 items-center justify-center rounded-[2px] bg-[#FF6B6B] text-white"><AlertTriangle className="h-3.5 w-3.5" /></span>
+              <span className="mt-0.5 inline-flex h-6 w-6 items-center justify-center rounded-[2px] bg-[#FF6B6B] text-white">
+                <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                </svg>
+              </span>
               <div>
                 <p className="text-sm font-semibold" style={{ color: "#1F1F1F" }}>Registration Required</p>
                 <p className="text-xs text-muted-foreground">You need to register with the ERC system before making deposits.</p>
@@ -188,18 +190,3 @@ function SummaryRow({ label, value, muted = false }: { label: string; value: str
     </div>
   )
 }
-
-function StatusPill({ label, color }: { label: string; color: string }) {
-  return (
-    <div className="flex items-center justify-between rounded-[10px] px-3 py-2 text-xs text-white" style={{ backgroundColor: color }}>
-      <span>{label}</span>
-      <span className="inline-flex h-3 w-3 items-center justify-center rounded-[2px] bg-white/20">
-        <svg width="8" height="8" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M2 2h6v6" stroke="white" strokeWidth="1" />
-          <path d="M8 2L2 8" stroke="white" strokeWidth="1" />
-        </svg>
-      </span>
-    </div>
-  )
-}
-

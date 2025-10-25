@@ -263,14 +263,14 @@ export function NewWithdraw({ onNavigate, mode }: NewWithdrawProps) {
                         </div>
 
                         {/* Insufficient Balance Warning */}
-                        {decryptedBalance && amount && parseUnits(amount, Number(decimals || 18)) > decryptedBalance && (
+                        {decryptedBalance && amount && parseUnits(amount, Number(decimals || 18)) > decryptedBalance ? (
                             <StatusIndicator
                                 status="error"
                                 message="Insufficient Balance"
                                 variant="card"
                                 details={`You only have ${currentBalance} ${tokenSymbol} available`}
                             />
-                        )}
+                        ) : null}
 
                         {/* Step Indicator */}
                         {isProcessing && (
@@ -340,7 +340,7 @@ export function NewWithdraw({ onNavigate, mode }: NewWithdrawProps) {
                                 !amount ||
                                 parseFloat(amount) <= 0 ||
                                 !isRegistered ||
-                                (decryptedBalance && parseUnits(amount || "0", Number(decimals || 18)) > decryptedBalance)
+                                (decryptedBalance ? parseUnits(amount || "0", Number(decimals || 18)) > decryptedBalance : false)
                             }
                             className="btn-success w-full mt-6"
                         >

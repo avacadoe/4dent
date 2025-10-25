@@ -1,19 +1,15 @@
 "use client"
 
-import Link from "next/link"
 import { useEffect, useState } from "react"
-import { BookOpen, FileText, Menu } from "lucide-react"
 
 const navItems = [
   {
     href: "#blog",
     label: "Blog",
-    icon: FileText,
   },
   {
     href: "#docs",
     label: "Docs",
-    icon: BookOpen,
   },
 ]
 
@@ -26,11 +22,6 @@ export function Navbar() {
     const id = setTimeout(() => setToastOpen(false), 2500)
     return () => clearTimeout(id)
   }, [toastOpen])
-
-  const handleConnect = (e: React.MouseEvent) => {
-    e.preventDefault()
-    setToastOpen(true)
-  }
 
   return (
     <header
@@ -71,7 +62,7 @@ export function Navbar() {
           <div className="mt-2 h-[3px] w-full overflow-hidden rounded-[1px] bg-black/10">
             <div className="h-full w-full origin-right bg-[#FF6B6B]" style={{ animation: "toast-progress 2.5s linear forwards" }} />
           </div>
-          <style jsx>{`
+          <style>{`
             @keyframes toast-progress {
               from { transform: scaleX(1); }
               to { transform: scaleX(0); }
@@ -89,7 +80,7 @@ export function Navbar() {
       </div>
 
       <div className="relative z-[1] mx-auto flex h-[68px] w-full max-w-[1200px] items-center justify-between px-6 lg:h-[88px] lg:px-16">
-        <Link href="#home" className="group relative flex items-center gap-3">
+        <a href="#home" className="group relative flex items-center gap-3">
           <span className="flex flex-col leading-none">
             <span
               className="text-[24px] font-semibold tracking-[-0.04em] text-[#FF6B6B]"
@@ -100,39 +91,25 @@ export function Navbar() {
               avacado
             </span>
           </span>
-        </Link>
+        </a>
 
         <nav className="hidden items-center gap-7 lg:flex">
-          {navItems.map(({ href, label, icon: Icon }) => (
-            <Link
+          {navItems.map(({ href, label }) => (
+            <a
               key={label}
               href={href}
               className="group relative flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.18em] text-[#3F3F3F] transition-colors duration-200 hover:text-[#FF6B6B]"
             >
-              <span className="grid h-7 w-7 place-items-center rounded-[2px] border border-black/10 bg-white/70 text-[#FF6B6B]/70 transition-all duration-200 group-hover:text-[#FF6B6B] group-hover:shadow-[0_4px_12px_rgba(255,107,107,0.25)]">
-                <Icon className="h-3.5 w-3.5" aria-hidden="true" />
-              </span>
               <span>{label}</span>
               <span className="pointer-events-none absolute bottom-[-12px] left-0 right-0 mx-auto h-[1px] w-0 bg-[#FF6B6B] transition-all duration-300 group-hover:w-full" />
-            </Link>
+            </a>
           ))}
         </nav>
-
-        {/* <div className="hidden items-center gap-3 lg:flex">
-          <button
-            type="button"
-            onClick={handleConnect}
-            className="group inline-flex h-10 items-center justify-center rounded-[2px] border border-[#FF6B6B] bg-[#FF6B6B] px-6 text-[12px] font-semibold uppercase tracking-[0.18em] text-white shadow-[0_10px_30px_rgba(255,107,107,0.35)] transition-all duration-200 hover:-translate-y-0.5 hover:bg-transparent hover:text-[#FF6B6B]"
-          >
-            Connect Wallet
-          </button>
-        </div> */}
 
         <button
           type="button"
           className="inline-flex h-10 w-10 items-center justify-center rounded-[2px] border border-black/10 bg-white/70 text-[#FF6B6B] transition-all duration-200 hover:border-[#FF6B6B] hover:text-[#FF6B6B] lg:hidden"
         >
-          <Menu className="h-5 w-5" aria-hidden="true" />
           <span className="sr-only">Open navigation</span>
         </button>
       </div>

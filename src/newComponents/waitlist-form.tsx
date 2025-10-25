@@ -1,13 +1,8 @@
 "use client"
 
-import { useActionState, useEffect, useRef } from "react"
-import { useFormStatus } from "react-dom"
-import { initialWaitlistState, type WaitlistFormState } from "@/app/actions/waitlist-form-state"
-import { submitWaitlistAction } from "@/app/actions/submit-waitlist"
+import { useState, useEffect, useRef } from "react"
 
-function SubmitButton() {
-  const { pending } = useFormStatus()
-
+function SubmitButton({ pending }: { pending: boolean }) {
   return (
     <button
       type="submit"
@@ -22,11 +17,19 @@ function SubmitButton() {
   )
 }
 
+type WaitlistFormState = {
+  status: "idle" | "success" | "error";
+  message: string;
+}
+
+const initialWaitlistState: WaitlistFormState = {
+  status: "idle",
+  message: "",
+}
+
 export function WaitlistForm() {
-  const [state, formAction] = useActionState<WaitlistFormState, FormData>(
-    submitWaitlistAction,
-    initialWaitlistState,
-  )
+  const [state, setState] = useState<WaitlistFormState>(initialWaitlistState)
+  const [pending, setPending] = useState(false)
   const formRef = useRef<HTMLFormElement>(null)
 
   useEffect(() => {
@@ -35,10 +38,20 @@ export function WaitlistForm() {
     }
   }, [state.status])
 
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    setPending(true)
+    // Simulate form submission
+    setTimeout(() => {
+      setState({ status: "success", message: "Successfully joined the waitlist!" })
+      setPending(false)
+    }, 1000)
+  }
+
   return (
     <form
       ref={formRef}
-      action={formAction}
+      onSubmit={handleSubmit}
       className="space-y-4"
       aria-describedby="waitlist-feedback"
       style={{
@@ -147,7 +160,7 @@ export function WaitlistForm() {
         >
           We'll only email you about the product launch.
         </p>
-        <SubmitButton />
+        <SubmitButton pending={pending} />
       </div>
 
       {state.status !== "idle" && (

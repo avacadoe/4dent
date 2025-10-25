@@ -45,7 +45,7 @@ export function App() {
 	
 	// Load UI version and page from localStorage on mount
 	const [uiVersion, setUiVersion] = useState<"classic" | "new">(() => {
-		return (localStorage.getItem("uiVersion") as "classic" | "new") || "classic";
+		return (localStorage.getItem("uiVersion") as "classic" | "new") || "new";
 	});
 	
 	const [newPage, setNewPage] = useState<NewPageType>(() => {

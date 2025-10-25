@@ -1,27 +1,23 @@
 import react from "@vitejs/plugin-react";
 import { defineConfig } from "vite";
-import { nodePolyfills } from "vite-plugin-node-polyfills";
+import nodePolyfills from 'rollup-plugin-polyfill-node';
+import { NodeGlobalsPolyfillPlugin } from '@esbuild-plugins/node-globals-polyfill';
+import { NodeModulesPolyfillPlugin } from '@esbuild-plugins/node-modules-polyfill';
 
 export default defineConfig({
 	plugins: [
 		react(),
-		nodePolyfills({
-			include: ["crypto", "buffer", "stream", "util", "process", "fs"],
-			globals: {
-				Buffer: true,
-				global: true,
-				process: true,
-			},
-		}),
 	],
 	resolve: {
 		alias: {
-			"node:crypto": "crypto",
+			"node:crypto": "crypto-browserify",
 			"node:buffer": "buffer",
-			"node:stream": "stream",
+			"node:stream": "stream-browserify",
 			"node:util": "util",
-			"node:process": "process",
-			"node:fs": "fs",
+			"node:process": "process/browser",
+			buffer: 'buffer',
+			process: 'process/browser',
+			util: 'util',
 		},
 	},
 	build: {
@@ -29,13 +25,25 @@ export default defineConfig({
 			transformMixedEsModules: true,
 		},
 		rollupOptions: {
-			onwarn(warning, warn) {
-				// Suppress warnings about polyfill shims
-				if (warning.code === 'UNRESOLVED_IMPORT' && warning.message?.includes('vite-plugin-node-polyfills/shims')) {
-					return;
-				}
-				warn(warning);
-			}
+			plugins: [
+				nodePolyfills() as any,
+			],
+			external: [],
 		}
+	},
+	optimizeDeps: {
+		include: ['@tanstack/react-query'],
+		esbuildOptions: {
+			define: {
+				global: 'globalThis',
+			},
+			plugins: [
+				NodeGlobalsPolyfillPlugin({
+					process: true,
+					buffer: true,
+				}),
+				NodeModulesPolyfillPlugin(),
+			],
+		},
 	},
 });

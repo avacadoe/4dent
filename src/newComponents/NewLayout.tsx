@@ -13,7 +13,6 @@ export function NewLayout({ children, onNavigate, currentPage = "home" }: NewLay
     const { address, isConnected } = useAccount();
     const { open } = useAppKit();
     const [showLearnDropdown, setShowLearnDropdown] = useState(false);
-    const [showMobileMenu, setShowMobileMenu] = useState(false);
     const dropdownRef = useRef<HTMLDivElement>(null);
     
     const showNav = currentPage !== "home";
@@ -257,228 +256,39 @@ export function NewLayout({ children, onNavigate, currentPage = "home" }: NewLay
                         )}
                     </div>
 
-                    {/* Right side - Connect wallet & Hamburger */}
+                    {/* Right side - Connect wallet */}
                     <div className="flex items-center gap-4">
-                        {/* Desktop Wallet Button */}
-                        <div className="hidden md:flex items-center gap-3">
-                            {isConnected && address ? (
-                                <>
-                                    <div className="hidden sm:block">
-                                        <p className="mono-kicker text-gray-500">
-                                            Connected
-                                        </p>
-                                        <p className="text-sm font-medium text-black">
-                                            {address.slice(0, 6)}...
-                                            {address.slice(-4)}
-                                        </p>
-                                    </div>
-                                    <button
-                                        type="button"
-                                        onClick={() => open()}
-                                        className="bg-coral-red text-white border border-coral-red hover:bg-coral-red/90 transition-colors px-4 py-2 rounded-[2px] text-sm font-medium"
-                                    >
-                                        Wallet
-                                    </button>
-                                </>
-                            ) : (
+                        {isConnected && address ? (
+                            <div className="flex items-center gap-3">
+                                <div className="hidden sm:block">
+                                    <p className="mono-kicker text-gray-500">
+                                        Connected
+                                    </p>
+                                    <p className="text-sm font-medium text-black">
+                                        {address.slice(0, 6)}...
+                                        {address.slice(-4)}
+                                    </p>
+                                </div>
                                 <button
                                     type="button"
                                     onClick={() => open()}
-                                    className="btn-primary"
+                                    className="bg-coral-red text-white border border-coral-red hover:bg-coral-red/90 transition-colors px-4 py-2 rounded-[2px] text-sm font-medium"
                                 >
-                                    Connect Wallet
+                                    Wallet
                                 </button>
-                            )}
-                        </div>
-
-                        {/* Mobile Hamburger Menu */}
-                        {showNav && (
+                            </div>
+                        ) : (
                             <button
                                 type="button"
-                                onClick={() => setShowMobileMenu(!showMobileMenu)}
-                                className="md:hidden flex flex-col gap-1.5 p-2"
-                                aria-label="Toggle menu"
+                                onClick={() => open()}
+                                className="btn-primary"
                             >
-                                <motion.span
-                                    animate={{ rotate: showMobileMenu ? 45 : 0, y: showMobileMenu ? 8 : 0 }}
-                                    className="w-6 h-0.5 bg-coral-red"
-                                />
-                                <motion.span
-                                    animate={{ opacity: showMobileMenu ? 0 : 1 }}
-                                    className="w-6 h-0.5 bg-coral-red"
-                                />
-                                <motion.span
-                                    animate={{ rotate: showMobileMenu ? -45 : 0, y: showMobileMenu ? -8 : 0 }}
-                                    className="w-6 h-0.5 bg-coral-red"
-                                />
+                                Connect Wallet
                             </button>
                         )}
                     </div>
                 </div>
             </header>
-
-            {/* Mobile Menu Dropdown */}
-            <AnimatePresence>
-                {showMobileMenu && showNav && onNavigate && (
-                    <motion.div
-                        initial={{ opacity: 0, height: 0 }}
-                        animate={{ opacity: 1, height: "auto" }}
-                        exit={{ opacity: 0, height: 0 }}
-                        transition={{ duration: 0.2 }}
-                        className="md:hidden sticky top-[68px] z-40 border-b border-black/10 bg-[#ECECEC]/95 backdrop-blur overflow-hidden"
-                        style={{
-                            backgroundImage:
-                                "radial-gradient(circle, rgba(0,0,0,0.08) 1px, transparent 1px)",
-                            backgroundSize: "12px 12px",
-                        }}
-                    >
-                        <nav className="px-6 py-4 space-y-2">
-                            <button
-                                type="button"
-                                onClick={() => {
-                                    onNavigate("dashboard");
-                                    setShowMobileMenu(false);
-                                }}
-                                className={`w-full text-left px-4 py-3 rounded-[2px] text-sm font-medium transition-colors ${
-                                    currentPage === "dashboard"
-                                        ? "bg-coral-red/10 text-coral-red"
-                                        : "text-gray-700 hover:bg-black/5"
-                                }`}
-                            >
-                                Dashboard
-                            </button>
-                            <button
-                                type="button"
-                                onClick={() => {
-                                    onNavigate("deposit");
-                                    setShowMobileMenu(false);
-                                }}
-                                className={`w-full text-left px-4 py-3 rounded-[2px] text-sm font-medium transition-colors ${
-                                    currentPage === "deposit"
-                                        ? "bg-coral-red/10 text-coral-red"
-                                        : "text-gray-700 hover:bg-black/5"
-                                }`}
-                            >
-                                Deposit
-                            </button>
-                            <button
-                                type="button"
-                                onClick={() => {
-                                    onNavigate("transfer");
-                                    setShowMobileMenu(false);
-                                }}
-                                className={`w-full text-left px-4 py-3 rounded-[2px] text-sm font-medium transition-colors ${
-                                    currentPage === "transfer"
-                                        ? "bg-coral-red/10 text-coral-red"
-                                        : "text-gray-700 hover:bg-black/5"
-                                }`}
-                            >
-                                Transfer
-                            </button>
-                            <button
-                                type="button"
-                                onClick={() => {
-                                    onNavigate("withdraw");
-                                    setShowMobileMenu(false);
-                                }}
-                                className={`w-full text-left px-4 py-3 rounded-[2px] text-sm font-medium transition-colors ${
-                                    currentPage === "withdraw"
-                                        ? "bg-coral-red/10 text-coral-red"
-                                        : "text-gray-700 hover:bg-black/5"
-                                }`}
-                            >
-                                Withdraw
-                            </button>
-                            
-                            {/* Learn Section */}
-                            <div className="pt-2 border-t border-black/10">
-                                <p className="px-4 py-2 text-xs uppercase tracking-wider text-gray-500 font-semibold">
-                                    Learn
-                                </p>
-                                <button
-                                    type="button"
-                                    onClick={() => {
-                                        onNavigate("ecc");
-                                        setShowMobileMenu(false);
-                                    }}
-                                    className={`w-full text-left px-4 py-3 rounded-[2px] text-sm font-medium transition-colors ${
-                                        currentPage === "ecc"
-                                            ? "bg-coral-red/10 text-coral-red"
-                                            : "text-gray-700 hover:bg-black/5"
-                                    }`}
-                                >
-                                    Elliptic Curves
-                                </button>
-                                <button
-                                    type="button"
-                                    onClick={() => {
-                                        onNavigate("hashes");
-                                        setShowMobileMenu(false);
-                                    }}
-                                    className={`w-full text-left px-4 py-3 rounded-[2px] text-sm font-medium transition-colors ${
-                                        currentPage === "hashes"
-                                            ? "bg-coral-red/10 text-coral-red"
-                                            : "text-gray-700 hover:bg-black/5"
-                                    }`}
-                                >
-                                    Hash Functions
-                                </button>
-                                <button
-                                    type="button"
-                                    onClick={() => {
-                                        onNavigate("poseidon");
-                                        setShowMobileMenu(false);
-                                    }}
-                                    className={`w-full text-left px-4 py-3 rounded-[2px] text-sm font-medium transition-colors ${
-                                        currentPage === "poseidon"
-                                            ? "bg-coral-red/10 text-coral-red"
-                                            : "text-gray-700 hover:bg-black/5"
-                                    }`}
-                                >
-                                    Poseidon Encryption
-                                </button>
-                            </div>
-                            
-                            {/* Wallet Button */}
-                            <div className="pt-4 border-t border-black/10">
-                                {isConnected && address ? (
-                                    <div className="space-y-2">
-                                        <div className="px-4">
-                                            <p className="mono-kicker text-gray-500">
-                                                Connected
-                                            </p>
-                                            <p className="text-sm font-medium text-black">
-                                                {address.slice(0, 6)}...{address.slice(-4)}
-                                            </p>
-                                        </div>
-                                        <button
-                                            type="button"
-                                            onClick={() => {
-                                                open();
-                                                setShowMobileMenu(false);
-                                            }}
-                                            className="w-full bg-coral-red text-white border border-coral-red hover:bg-coral-red/90 transition-colors px-4 py-3 rounded-[2px] text-sm font-medium"
-                                        >
-                                            Manage Wallet
-                                        </button>
-                                    </div>
-                                ) : (
-                                    <button
-                                        type="button"
-                                        onClick={() => {
-                                            open();
-                                            setShowMobileMenu(false);
-                                        }}
-                                        className="w-full btn-primary py-3"
-                                    >
-                                        Connect Wallet
-                                    </button>
-                                )}
-                            </div>
-                        </nav>
-                    </motion.div>
-                )}
-            </AnimatePresence>
 
             {/* Main content */}
             <motion.main 
