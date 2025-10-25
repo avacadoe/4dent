@@ -5,6 +5,16 @@ export const CONTRACTS = {
     ERC20: "0x2d13f85a3b201637Ad02F339b461749881f7d49d",
 } as const;
 
+// RPC Configuration - Using Avalanche's official public RPC to avoid rate limits
+export const RPC_CONFIG = {
+    AVALANCHE_FUJI: "https://api.avax-test.network/ext/bc/C/rpc",
+    // Fallback RPCs in case primary fails
+    FALLBACK_RPCS: [
+        "https://avalanche-fuji-c-chain-rpc.publicnode.com",
+        "https://rpc.ankr.com/avalanche_fuji",
+    ],
+} as const;
+
 // Circuit configuration
 export const CIRCUIT_CONFIG = {
     register: {

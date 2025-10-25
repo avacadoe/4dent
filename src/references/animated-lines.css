@@ -1,0 +1,81 @@
+/* Animated horizontal lines with moving light red effect */
+@keyframes redLightMove {
+  0% {
+    transform: translateX(-400px);
+  }
+  100% {
+    transform: translateX(calc(100vw + 400px));
+  }
+}
+
+@keyframes linePulse {
+  0%, 100% {
+    background: linear-gradient(90deg, 
+      rgba(255, 107, 107, 0.1) 0%, 
+      rgba(255, 107, 107, 0.2) 50%, 
+      rgba(255, 107, 107, 0.1) 100%);
+  }
+  50% {
+    background: linear-gradient(90deg, 
+      rgba(255, 107, 107, 0.2) 0%, 
+      rgba(255, 107, 107, 0.3) 50%, 
+      rgba(255, 107, 107, 0.2) 100%);
+  }
+}
+
+.animated-horizontal-line {
+  position: relative;
+  overflow: hidden;
+  height: 3px !important;
+  background: linear-gradient(90deg, 
+    rgba(255, 107, 107, 0.1) 0%, 
+    rgba(255, 107, 107, 0.2) 50%, 
+    rgba(255, 107, 107, 0.1) 100%);
+  animation: linePulse 4s ease-in-out infinite;
+  box-shadow: 0 0 10px rgba(255, 107, 107, 0.2);
+}
+
+/* Static glow effect */
+.animated-horizontal-line::after {
+  content: '';
+  position: absolute;
+  top: -4px;
+  left: 0;
+  right: 0;
+  height: 11px;
+  background: radial-gradient(ellipse at center, 
+    rgba(255, 107, 107, 0.3) 0%, 
+    transparent 70%);
+  pointer-events: none;
+}
+
+/* Moving light beam - more visible */
+.animated-horizontal-line::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 400px;
+  height: 80px;
+  transform: translateY(-50%);
+  background: radial-gradient(ellipse at center,
+    rgba(255, 107, 107, 1) 0%,
+    rgba(255, 107, 107, 0.8) 10%,
+    rgba(255, 107, 107, 0.5) 30%,
+    rgba(255, 107, 107, 0.2) 50%,
+    transparent 70%
+  );
+  opacity: 0.8;
+  animation: redLightMove 4s linear infinite;
+  animation-delay: var(--animation-delay, 0s);
+  pointer-events: none;
+  filter: blur(8px);
+}
+
+.animated-horizontal-line.line-top::before {
+  animation-delay: 0s;
+}
+
+.animated-horizontal-line.line-bottom::before {
+  animation-delay: 2s;
+}

@@ -1,0 +1,389 @@
+import { useState, useEffect } from "react";
+import {
+    type CompatiblePublicClient,
+    type CompatibleWalletClient,
+    useEERC,
+} from "@avalabs/eerc-sdk";
+import {
+    useAccount,
+    usePublicClient,
+    useWalletClient,
+    useWaitForTransactionReceipt,
+    useReadContract,
+} from "wagmi";
+import { avalancheFuji } from "wagmi/chains";
+import { parseUnits, formatUnits } from "viem";
+import { toast } from "react-toastify";
+import { NewLayout, AmountInput, LoadingSpinner, StatusIndicator } from "../newComponents";
+import { CIRCUIT_CONFIG, CONTRACTS, URLS, EXPLORER_BASE_URL_TX } from "../config/contracts";
+import { DEMO_TOKEN_ABI as erc20Abi } from "../pkg/constants";
+import "../newStyles.css";
+
+interface NewDepositProps {
+    onNavigate: (page: string) => void;
+    mode: "standalone" | "converter";
+}
+
+export function NewDeposit({ onNavigate, mode }: NewDepositProps) {
+    const [amount, setAmount] = useState("");
+    const [txHash, setTxHash] = useState<`0x${string}`>("" as `0x${string}`);
+    const [isProcessing, setIsProcessing] = useState(false);
+    const [currentStep, setCurrentStep] = useState<"input" | "approve" | "prove" | "deposit">("input");
+
+    const { address, isConnected } = useAccount();
+    const publicClient = usePublicClient({ chainId: avalancheFuji.id });
+    const { data: walletClient } = useWalletClient();
+
+    const { data: transactionReceipt, isSuccess } = useWaitForTransactionReceipt({
+        hash: txHash,
+        query: { enabled: Boolean(txHash) },
+        confirmations: 1,
+    });
+
+    const {
+        isRegistered,
+        symbol,
+        useEncryptedBalance,
+    } = useEERC(
+        publicClient as CompatiblePublicClient,
+        walletClient as CompatibleWalletClient,
+        mode === "converter"
+            ? CONTRACTS.EERC_CONVERTER
+            : CONTRACTS.EERC_STANDALONE,
+        URLS,
+        CIRCUIT_CONFIG
+    );
+
+    const {
+        deposit,
+        privateMint,
+        decimals,
+        decryptedBalance,
+        refetchBalance,
+    } = useEncryptedBalance(mode === "converter" ? CONTRACTS.ERC20 : undefined);
+
+    // ERC20 balance for converter mode
+    const { data: erc20Balance, refetch: refetchErc20Balance } = useReadContract({
+        address: CONTRACTS.ERC20 as `0x${string}`,
+        abi: erc20Abi,
+        functionName: "balanceOf",
+        args: address ? [address] : undefined,
+        query: { enabled: Boolean(address) && mode === "converter" },
+    });
+
+    const { data: erc20Decimals } = useReadContract({
+        address: CONTRACTS.ERC20 as `0x${string}`,
+        abi: erc20Abi,
+        functionName: "decimals",
+        query: { enabled: mode === "converter" },
+    });
+
+    const { data: erc20Symbol } = useReadContract({
+        address: CONTRACTS.ERC20 as `0x${string}`,
+        abi: erc20Abi,
+        functionName: "symbol",
+        query: { enabled: mode === "converter" },
+    });
+
+    useEffect(() => {
+        if (txHash && isSuccess && transactionReceipt) {
+            toast.success(
+                <div>
+                    <p>Deposit successful!</p>
+                    <a
+                        href={`${EXPLORER_BASE_URL_TX}${transactionReceipt?.transactionHash}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-emerald-green underline"
+                    >
+                        View on Explorer →
+                    </a>
+                </div>
+            );
+            setTxHash("" as `0x${string}`);
+            setIsProcessing(false);
+            setCurrentStep("input");
+            setAmount("");
+            refetchBalance();
+            if (mode === "converter") refetchErc20Balance();
+        }
+    }, [txHash, isSuccess, transactionReceipt, mode, refetchBalance, refetchErc20Balance]);
+
+    useEffect(() => {
+        if (!isRegistered && isConnected) {
+            onNavigate("registration");
+        }
+    }, [isRegistered, isConnected, onNavigate]);
+
+    const handleDeposit = async () => {
+        if (!isConnected || !address) {
+            toast.error("Please connect your wallet");
+            return;
+        }
+
+        if (!amount || parseFloat(amount) <= 0) {
+            toast.error("Please enter a valid amount");
+            return;
+        }
+
+        setIsProcessing(true);
+
+        try {
+            if (mode === "converter") {
+                // Converter mode: deposit ERC20
+                setCurrentStep("approve");
+                
+                if (!erc20Decimals) {
+                    throw new Error("No decimals");
+                }
+
+                const parsedAmount = parseUnits(amount, erc20Decimals);
+                
+                setCurrentStep("prove");
+                const { transactionHash } = await deposit(parsedAmount);
+                
+                setCurrentStep("deposit");
+                setTxHash(transactionHash as `0x${string}`);
+            } else {
+                // Standalone mode: private mint
+                setCurrentStep("prove");
+                
+                const parsedAmount = parseUnits(amount, Number(decimals || 18));
+                
+                const { transactionHash } = await privateMint(address, parsedAmount);
+                
+                setCurrentStep("deposit");
+                setTxHash(transactionHash as `0x${string}`);
+            }
+        } catch (error) {
+            console.error(error);
+            toast.error("Deposit failed");
+            setIsProcessing(false);
+            setCurrentStep("input");
+        }
+    };
+
+    const availableBalance = mode === "converter" && erc20Balance && erc20Decimals
+        ? formatUnits(erc20Balance as bigint, erc20Decimals)
+        : "0.00";
+
+    const tokenSymbol = mode === "converter" ? (erc20Symbol as string || "ERC20") : (symbol || "eERC");
+    const currentBalance = decryptedBalance
+        ? formatUnits(decryptedBalance, Number(decimals || 18))
+        : "0.00";
+
+    if (!isConnected) {
+        return (
+            <NewLayout>
+                <div className="max-w-2xl mx-auto text-center py-20">
+                    <h1 className="text-5xl font-bold text-coral-red mb-6">
+                        Connect Your Wallet
+                    </h1>
+                    <p className="text-lg text-gray-600">
+                        Please connect your wallet to make deposits
+                    </p>
+                </div>
+            </NewLayout>
+        );
+    }
+
+    return (
+        <NewLayout>
+            <div className="max-w-6xl mx-auto space-y-6">
+                {/* Header */}
+                <div className="mb-4 flex items-center justify-between">
+                    <div>
+                        <div className="flex items-center gap-2 text-xs uppercase tracking-[0.18em] text-gray-500 mb-2">
+                            <span>Deposit</span>
+                            <span aria-hidden>•</span>
+                            <span className="rounded-[2px] border border-black/10 bg-white/70 px-1.5 py-0.5">
+                                public → private
+                            </span>
+                        </div>
+                        <h1 className="text-5xl font-bold text-coral-red">
+                            Deposit Tokens
+                        </h1>
+                    </div>
+                    <button
+                        type="button"
+                        onClick={() => onNavigate("dashboard")}
+                        className="btn-secondary"
+                    >
+                        ← Back
+                    </button>
+                </div>
+
+                {!isRegistered && (
+                    <StatusIndicator
+                        status="error"
+                        message="Registration Required"
+                        variant="card"
+                        details="You need to register with the EERC system before making deposits."
+                    />
+                )}
+
+                <div className="grid grid-cols-1 lg:grid-cols-[1fr_380px] gap-6">
+                    {/* Left Column - Input */}
+                    <div className="space-y-6">
+                        {/* Amount Input */}
+                        <div className="frost-card p-6">
+                            <p className="mono-kicker text-coral-red mb-4">
+                                [ AMOUNT ]
+                            </p>
+                            <AmountInput
+                                value={amount}
+                                onChange={setAmount}
+                                symbol={tokenSymbol}
+                                availableBalance={mode === "converter" ? availableBalance : undefined}
+                                placeholder="0.00"
+                                showQuickAmounts={mode === "converter"}
+                                onMax={
+                                    mode === "converter"
+                                        ? () => setAmount(availableBalance)
+                                        : undefined
+                                }
+                            />
+                        </div>
+
+                        {/* Current Balance */}
+                        <div className="frost-card p-6">
+                            <p className="mono-kicker text-gray-600 mb-4">
+                                [ CURRENT BALANCES ]
+                            </p>
+                            <div className="grid grid-cols-2 gap-4">
+                                {mode === "converter" && (
+                                    <div className="rounded-[8px] border border-black/10 bg-white/70 p-4">
+                                        <p className="text-xs text-gray-600 mb-2">
+                                            Public {tokenSymbol}
+                                        </p>
+                                        <p className="text-xl font-bold text-black">
+                                            {availableBalance}
+                                        </p>
+                                    </div>
+                                )}
+                                <div className="rounded-[8px] border border-black/10 bg-white/70 p-4">
+                                    <p className="text-xs text-gray-600 mb-2">
+                                        Private e{tokenSymbol}
+                                    </p>
+                                    <p className="text-xl font-bold text-black">
+                                        {currentBalance}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Step Indicator */}
+                        {isProcessing && (
+                            <div className="frost-card p-6">
+                                <p className="mono-kicker text-emerald-green mb-6">
+                                    [ TRANSACTION PROGRESS ]
+                                </p>
+                                <div className="step-indicator">
+                                    {mode === "converter" && (
+                                        <>
+                                            <div className={`step ${currentStep === "approve" ? "active" : currentStep !== "input" ? "completed" : ""}`}>
+                                                <div className="step-circle">1</div>
+                                                <span className="text-sm">Approve</span>
+                                            </div>
+                                            <div className="step-connector" />
+                                        </>
+                                    )}
+                                    <div className={`step ${currentStep === "prove" ? "active" : currentStep === "deposit" ? "completed" : ""}`}>
+                                        <div className="step-circle">{mode === "converter" ? "2" : "1"}</div>
+                                        <span className="text-sm">Generate Proof</span>
+                                    </div>
+                                    <div className="step-connector" />
+                                    <div className={`step ${currentStep === "deposit" ? "active" : ""}`}>
+                                        <div className="step-circle">{mode === "converter" ? "3" : "2"}</div>
+                                        <span className="text-sm">Deposit</span>
+                                    </div>
+                                </div>
+
+                                {currentStep === "prove" && (
+                                    <div className="mt-6">
+                                        <LoadingSpinner
+                                            message="Generating zero-knowledge proof..."
+                                            progress="This may take 10-30 seconds"
+                                        />
+                                    </div>
+                                )}
+                            </div>
+                        )}
+                    </div>
+
+                    {/* Right Column - Summary */}
+                    <aside className="frost-card p-6 h-max">
+                        <p className="mono-kicker text-coral-red mb-4">
+                            [ TRANSACTION SUMMARY ]
+                        </p>
+
+                        <div className="space-y-3">
+                            <SummaryRow
+                                label="Action"
+                                value={`Deposit ${tokenSymbol} → Receive e${tokenSymbol}`}
+                            />
+                            <SummaryRow
+                                label="Amount"
+                                value={amount || "0.00"}
+                            />
+                            <SummaryRow
+                                label="Network"
+                                value="Avalanche Fuji"
+                            />
+                            <SummaryRow
+                                label="Est. Gas"
+                                value="~$0.50"
+                                muted
+                            />
+
+                            {mode === "converter" && (
+                                <div className="rounded-[8px] border border-black/10 bg-white/70 p-3 text-xs text-gray-600">
+                                    Step 1: Approve {tokenSymbol} • Step 2: Generate ZK Proof • Step 3: Deposit
+                                </div>
+                            )}
+                        </div>
+
+                        <button
+                            type="button"
+                            onClick={handleDeposit}
+                            disabled={
+                                isProcessing ||
+                                !amount ||
+                                parseFloat(amount) <= 0 ||
+                                !isRegistered
+                            }
+                            className="btn-success w-full mt-6"
+                        >
+                            {isProcessing ? "Processing..." : "Confirm Deposit"}
+                        </button>
+
+                        {parseFloat(amount) > parseFloat(availableBalance) && mode === "converter" && (
+                            <p className="text-xs text-coral-red mt-3 text-center">
+                                Insufficient balance
+                            </p>
+                        )}
+                    </aside>
+                </div>
+            </div>
+        </NewLayout>
+    );
+}
+
+function SummaryRow({
+    label,
+    value,
+    muted = false,
+}: {
+    label: string;
+    value: string;
+    muted?: boolean;
+}) {
+    return (
+        <div className="flex items-center justify-between rounded-[8px] border border-black/10 bg-white/80 px-3 py-2">
+            <span className="text-xs text-gray-600">{label}</span>
+            <span className={muted ? "text-xs text-gray-600" : "text-sm font-semibold text-black"}>
+                {value}
+            </span>
+        </div>
+    );
+}

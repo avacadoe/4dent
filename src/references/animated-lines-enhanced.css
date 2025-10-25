@@ -1,0 +1,96 @@
+/* Enhanced animated horizontal lines with prominent light red effect */
+@keyframes scanLine {
+  0% {
+    left: -500px;
+  }
+  100% {
+    left: 100%;
+  }
+}
+
+@keyframes glow {
+  0%, 100% {
+    opacity: 0.4;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+.animated-horizontal-line {
+  position: relative;
+  overflow: hidden;
+  height: 4px !important;
+  /* Bright base line with gradient */
+  background: linear-gradient(90deg, 
+    rgba(255, 107, 107, 0.3) 0%,
+    rgba(255, 107, 107, 0.4) 25%,
+    rgba(255, 107, 107, 0.3) 50%,
+    rgba(255, 107, 107, 0.4) 75%,
+    rgba(255, 107, 107, 0.3) 100%);
+  /* Add glow to the entire line */
+  box-shadow: 
+    0 0 20px rgba(255, 107, 107, 0.5),
+    0 0 40px rgba(255, 107, 107, 0.3),
+    inset 0 0 10px rgba(255, 107, 107, 0.4);
+  animation: glow 3s ease-in-out infinite;
+}
+
+/* Bright scanning light */
+.animated-horizontal-line::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: -500px;
+  width: 500px;
+  height: 100px;
+  transform: translateY(-50%);
+  /* Very bright center with large spread */
+  background: radial-gradient(ellipse at center,
+    rgba(255, 255, 255, 0.9) 0%,
+    rgba(255, 107, 107, 1) 5%,
+    rgba(255, 107, 107, 0.8) 20%,
+    rgba(255, 107, 107, 0.4) 40%,
+    rgba(255, 107, 107, 0.2) 60%,
+    transparent 80%
+  );
+  animation: scanLine 3s linear infinite;
+  filter: blur(3px);
+  mix-blend-mode: screen;
+  pointer-events: none;
+}
+
+/* Additional bright spot in the center */
+.animated-horizontal-line::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: -500px;
+  width: 100px;
+  height: 40px;
+  transform: translateY(-50%);
+  background: radial-gradient(ellipse at center,
+    rgba(255, 255, 255, 1) 0%,
+    rgba(255, 150, 150, 1) 30%,
+    transparent 70%
+  );
+  animation: scanLine 3s linear infinite;
+  animation-delay: var(--inner-delay, 0s);
+  pointer-events: none;
+}
+
+.animated-horizontal-line.line-top::before {
+  animation-delay: 0s;
+}
+
+.animated-horizontal-line.line-top::after {
+  --inner-delay: 0s;
+}
+
+.animated-horizontal-line.line-bottom::before {
+  animation-delay: 1.5s;
+}
+
+.animated-horizontal-line.line-bottom::after {
+  --inner-delay: 1.5s;
+}

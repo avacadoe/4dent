@@ -1,6 +1,7 @@
 import ReactDOM from "react-dom/client";
 import { App } from "./App";
 import "./index.css";
+import "./newStyles.css";
 import { Analytics } from "@vercel/analytics/react";
 import { Bounce, ToastContainer } from "react-toastify";
 import { AppKitProvider } from "./AppKitProvider";
