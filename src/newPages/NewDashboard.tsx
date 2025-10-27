@@ -49,7 +49,7 @@ export function NewDashboard({ onNavigate, mode }: NewDashboardProps) {
     );
 
     const {
-        encryptedBalance,
+        encryptedBalance: _encryptedBalance,
         decryptedBalance,
         decimals,
         refetchBalance,
