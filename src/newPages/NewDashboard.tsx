@@ -14,7 +14,7 @@ import { formatUnits } from "viem";
 import { motion } from "framer-motion";
 import { toast } from "react-toastify";
 import { AiOutlineArrowDown, AiOutlineArrowUp, AiOutlineSwap } from "react-icons/ai";
-import { NewLayout, BalanceCard, StatusIndicator } from "../newComponents";
+import { NewLayout } from "../newComponents";
 import { CIRCUIT_CONFIG, CONTRACTS, URLS } from "../config/contracts";
 import "../newStyles.css";
 
@@ -25,6 +25,8 @@ interface NewDashboardProps {
 
 export function NewDashboard({ onNavigate, mode }: NewDashboardProps) {
     const [isRefreshing, setIsRefreshing] = useState(false);
+    const [showBalance, setShowBalance] = useState(false);
+    const [isDecrypting, setIsDecrypting] = useState(false);
     const hasRedirectedRef = useRef(false);
 
     const { address, isConnected } = useAccount();
@@ -146,14 +148,55 @@ export function NewDashboard({ onNavigate, mode }: NewDashboardProps) {
 
                 {/* Balance Display */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <BalanceCard
-                        balance={formattedBalance}
-                        symbol={symbol || "eERC"}
-                        label="Encrypted Balance"
-                        onRefresh={handleRefresh}
-                        isRefreshing={isRefreshing}
-                        showPrivacyToggle={true}
-                    />
+                    <div className="frost-card p-6">
+                        <span className="mono-kicker text-coral-red mb-4 block">
+                            [ ENCRYPTED BALANCE ]
+                        </span>
+                        
+                        {!showBalance && !isDecrypting ? (
+                            <div className="text-center py-12">
+                                <button
+                                    type="button"
+                                    onClick={() => {
+                                        setIsDecrypting(true);
+                                        setTimeout(() => {
+                                            setIsDecrypting(false);
+                                            setShowBalance(true);
+                                        }, 1500);
+                                    }}
+                                    className="btn-primary"
+                                >
+                                    Decrypt Balance
+                                </button>
+                            </div>
+                        ) : isDecrypting ? (
+                            <div className="text-center py-12">
+                                <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-coral-red mb-3"></div>
+                                <p className="text-sm text-gray-600">
+                                    Decrypting balance...
+                                </p>
+                            </div>
+                        ) : (
+                            <>
+                                <div className="mb-4">
+                                    <p className="text-4xl font-bold text-black mb-2">
+                                        {formattedBalance}
+                                    </p>
+                                    <p className="text-sm text-gray-600">
+                                        {symbol || "eERC"}
+                                    </p>
+                                </div>
+                                <button
+                                    type="button"
+                                    onClick={handleRefresh}
+                                    disabled={isRefreshing}
+                                    className="btn-secondary text-sm w-full"
+                                >
+                                    {isRefreshing ? "Refreshing..." : "Refresh Balance"}
+                                </button>
+                            </>
+                        )}
+                    </div>
 
                     <div className="frost-card p-6">
                         <span className="mono-kicker text-coral-red mb-4 block">
@@ -167,17 +210,6 @@ export function NewDashboard({ onNavigate, mode }: NewDashboardProps) {
                                 <p className="text-sm font-mono font-semibold break-all">
                                     {address}
                                 </p>
-                            </div>
-                            <div className="rounded-[8px] border border-black/10 bg-white/80 p-3">
-                                <p className="text-xs text-gray-600 mb-1">
-                                    Registration Status
-                                </p>
-                                <div className="flex items-center gap-2">
-                                    <span className="status-dot success" />
-                                    <span className="text-sm font-semibold text-emerald-green">
-                                        Registered
-                                    </span>
-                                </div>
                             </div>
                             {publicKey && (
                                 <div className="rounded-[8px] border border-black/10 bg-white/80 p-3">
@@ -195,6 +227,14 @@ export function NewDashboard({ onNavigate, mode }: NewDashboardProps) {
                                     </p>
                                 </div>
                             )}
+                            <div className="rounded-[8px] border border-black/10 bg-white/80 p-3">
+                                <p className="text-xs text-gray-600 mb-1">
+                                    Auditor Address
+                                </p>
+                                <p className="text-sm font-mono font-semibold break-all">
+                                    0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb
+                                </p>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -234,34 +274,6 @@ export function NewDashboard({ onNavigate, mode }: NewDashboardProps) {
                         />
                     </div>
                 </motion.div>
-
-                {/* Privacy Notice */}
-                <StatusIndicator
-                    status="info"
-                    message="Your balance is fully encrypted"
-                    variant="card"
-                    details="Only you can decrypt and view your actual balance. To others, it appears as encrypted ciphertext."
-                />
-
-                {/* Encrypted Balance Details */}
-                {encryptedBalance && (
-                    <div className="frost-card p-6">
-                        <span className="mono-kicker text-gray-500 mb-4 block">
-                            [ ENCRYPTED BALANCE (CIPHERTEXT) ]
-                        </span>
-                        <div className="rounded-[8px] border border-black/10 bg-gray-50 p-4 max-h-32 overflow-auto">
-                            <p
-                                className="text-xs font-mono break-all text-gray-700"
-                                style={{
-                                    fontFamily:
-                                        "JetBrains Mono, Monaco, monospace",
-                                }}
-                            >
-                                {JSON.stringify(encryptedBalance)}
-                            </p>
-                        </div>
-                    </div>
-                )}
             </div>
         </NewLayout>
     );

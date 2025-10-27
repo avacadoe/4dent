@@ -24,6 +24,7 @@ interface NewWithdrawProps {
 
 export function NewWithdraw({ onNavigate, mode }: NewWithdrawProps) {
     const [amount, setAmount] = useState("");
+    const [withdrawAddress, setWithdrawAddress] = useState("");
     const [txHash, setTxHash] = useState<`0x${string}`>("" as `0x${string}`);
     const [isProcessing, setIsProcessing] = useState(false);
     const [currentStep, setCurrentStep] = useState<"input" | "prove" | "withdraw">("input");
@@ -184,10 +185,10 @@ export function NewWithdraw({ onNavigate, mode }: NewWithdrawProps) {
                     
                     <div className="relative">
                         <div className="flex items-center gap-2 text-xs uppercase tracking-[0.18em] text-gray-500 mb-2">
-                            <span>Withdraw</span>
+                            <span>Withdraw Intent</span>
                             <span aria-hidden>•</span>
                             <span className="rounded-[2px] border border-black/10 bg-white/70 px-1.5 py-0.5">
-                                private → public
+                                batched withdrawal
                             </span>
                         </div>
                         <h1 
@@ -197,8 +198,11 @@ export function NewWithdraw({ onNavigate, mode }: NewWithdrawProps) {
                                 letterSpacing: "-0.02em",
                             }}
                         >
-                            Withdraw Tokens
+                            Withdraw Intent
                         </h1>
+                        <p className="text-gray-600 mt-2 text-sm">
+                            Create a withdrawal intent. Your profile will be locked until the batch is approved by the community.
+                        </p>
                     </div>
                     <button
                         type="button"
@@ -235,6 +239,23 @@ export function NewWithdraw({ onNavigate, mode }: NewWithdrawProps) {
                                 showQuickAmounts={true}
                                 onMax={() => setAmount(currentBalance)}
                             />
+                        </div>
+
+                        {/* Withdraw Address Input */}
+                        <div className="frost-card p-6">
+                            <p className="mono-kicker text-coral-red mb-4">
+                                [ WITHDRAW TO ADDRESS ]
+                            </p>
+                            <input
+                                type="text"
+                                value={withdrawAddress}
+                                onChange={(e) => setWithdrawAddress(e.target.value)}
+                                placeholder="0x..."
+                                className="w-full px-4 py-3 rounded-[8px] border border-black/10 bg-white/70 font-mono text-sm focus:outline-none focus:border-coral-red/40 transition-colors"
+                            />
+                            <p className="text-xs text-gray-600 mt-2">
+                                Enter the destination address (unregistered addresses allowed)
+                            </p>
                         </div>
 
                         {/* Balance Preview */}
@@ -305,29 +326,29 @@ export function NewWithdraw({ onNavigate, mode }: NewWithdrawProps) {
                     {/* Right Column - Summary */}
                     <aside className="frost-card p-6 h-max">
                         <p className="mono-kicker text-coral-red mb-4">
-                            [ TRANSACTION SUMMARY ]
+                            [ INTENT SUMMARY ]
                         </p>
 
                         <div className="space-y-3">
                             <SummaryRow
                                 label="Action"
-                                value={`Withdraw e${tokenSymbol} → Receive ${tokenSymbol}`}
+                                value="Create Withdraw Intent"
                             />
                             <SummaryRow
                                 label="Amount"
                                 value={amount || "0.00"}
                             />
                             <SummaryRow
-                                label="Remaining"
-                                value={remainingBalance}
+                                label="To Address"
+                                value={withdrawAddress ? `${withdrawAddress.slice(0, 6)}...${withdrawAddress.slice(-4)}` : "Not set"}
                             />
                             <SummaryRow
-                                label="Network"
-                                value="Avalanche Fuji"
+                                label="Batch System"
+                                value="50 intents per batch"
                             />
                             <SummaryRow
-                                label="Est. Gas"
-                                value="~$0.50"
+                                label="Status"
+                                value="Balance will lock"
                                 muted
                             />
                         </div>
@@ -344,8 +365,37 @@ export function NewWithdraw({ onNavigate, mode }: NewWithdrawProps) {
                             }
                             className="btn-success w-full mt-6"
                         >
-                            {isProcessing ? "Processing..." : "Confirm Withdrawal"}
+                            {isProcessing ? "Processing..." : "Make Withdraw Intent"}
                         </button>
+
+                        {/* Timeline */}
+                        <div className="frost-card p-6 mt-6">
+                            <p className="mono-kicker text-coral-red mb-3">
+                                [ INTENT TIMELINE ]
+                            </p>
+                            <div className="space-y-2">
+                                <div className="flex items-center gap-2 text-xs">
+                                    <span className="text-coral-red">→</span>
+                                    <span className="font-medium text-gray-900">Create intent</span>
+                                </div>
+                                <div className="flex items-center gap-2 text-xs">
+                                    <span className="text-coral-red">→</span>
+                                    <span className="font-semibold text-yellow-800">Balance locked</span>
+                                </div>
+                                <div className="flex items-center gap-2 text-xs">
+                                    <span className="text-coral-red">→</span>
+                                    <span className="font-medium text-gray-900">Batch collection</span>
+                                </div>
+                                <div className="flex items-center gap-2 text-xs">
+                                    <span className="text-coral-red">→</span>
+                                    <span className="font-medium text-gray-900">Community approval</span>
+                                </div>
+                                <div className="flex items-center gap-2 text-xs">
+                                    <span className="text-emerald-600">✓</span>
+                                    <span className="font-medium text-emerald-700">Execution complete</span>
+                                </div>
+                            </div>
+                        </div>
                     </aside>
                 </div>
             </div>

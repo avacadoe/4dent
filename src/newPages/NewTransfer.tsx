@@ -254,24 +254,6 @@ export function NewTransfer({ onNavigate, mode }: NewTransferProps) {
                     />
                 )}
 
-                {/* Privacy Notice */}
-                <div className="frost-card p-6 bg-blue-50/50 border-blue-200">
-                    <div className="flex items-start gap-3">
-                        <span className="inline-flex h-8 w-8 items-center justify-center rounded-[2px] bg-blue-500/20 text-blue-600 mt-0.5">
-                            🔒
-                        </span>
-                        <div>
-                            <p className="font-semibold text-black mb-1">
-                                Private Transfer
-                            </p>
-                            <p className="text-sm text-gray-600">
-                                Only you and the recipient can see the transfer amount.
-                                The transaction is encrypted using zero-knowledge proofs.
-                            </p>
-                        </div>
-                    </div>
-                </div>
-
                 <div className="grid grid-cols-1 lg:grid-cols-[1fr_380px] gap-6">
                     {/* Left Column */}
                     <div className="space-y-6">
@@ -393,10 +375,6 @@ export function NewTransfer({ onNavigate, mode }: NewTransferProps) {
                                 value="~$0.50"
                                 muted
                             />
-
-                            <div className="rounded-[8px] border border-black/10 bg-white/70 p-3 text-xs text-gray-600">
-                                Step 1: Generate ZK Proof • Step 2: Encrypt for recipient • Step 3: Transfer
-                            </div>
                         </div>
 
                         <button

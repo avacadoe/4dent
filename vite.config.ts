@@ -8,6 +8,20 @@ export default defineConfig({
 	plugins: [
 		react(),
 	],
+	server: {
+		host: true,
+		allowedHosts: [
+			'localhost',
+			'.trycloudflare.com',
+		],
+		cors: {
+			origin: '*',
+			credentials: true,
+		},
+		hmr: {
+			clientPort: 443,
+		},
+	},
 	resolve: {
 		alias: {
 			"node:crypto": "crypto-browserify",

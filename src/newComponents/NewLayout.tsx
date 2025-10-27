@@ -162,6 +162,28 @@ export function NewLayout({ children, onNavigate, currentPage = "home" }: NewLay
                                         style={{ originX: 0 }}
                                     />
                                 </motion.button>
+                                <motion.button
+                                    type="button"
+                                    onClick={() => onNavigate("batchApproval")}
+                                    whileHover="hover"
+                                    initial="initial"
+                                    className={`px-3 py-1.5 text-sm font-medium transition-colors relative ${
+                                        currentPage === "batchApproval"
+                                            ? "text-coral-red"
+                                            : "text-gray-600 hover:text-coral-red"
+                                    }`}
+                                >
+                                    Batch Approval
+                                    <motion.span
+                                        className="absolute bottom-0.5 left-3 right-3 h-[2px] bg-coral-red"
+                                        variants={{
+                                            initial: { scaleX: 0 },
+                                            hover: { scaleX: 1 }
+                                        }}
+                                        transition={{ duration: 0.2 }}
+                                        style={{ originX: 0 }}
+                                    />
+                                </motion.button>
                                 
                                 {/* Learn Dropdown */}
                                 <div className="relative" ref={dropdownRef}>

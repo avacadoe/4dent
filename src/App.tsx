@@ -7,6 +7,7 @@ import {
 	NewDeposit,
 	NewWithdraw,
 	NewTransfer,
+	NewBatchApproval,
 	NewECC,
 	NewHashes,
 	NewPoseidon,
@@ -41,7 +42,7 @@ export function App() {
 		"hashes" | "ecc" | "EERC" | "poseidon"
 	>("EERC");
 	
-	type NewPageType = "home" | "registration" | "dashboard" | "deposit" | "withdraw" | "transfer" | "ecc" | "hashes" | "poseidon";
+	type NewPageType = "home" | "registration" | "dashboard" | "deposit" | "withdraw" | "transfer" | "batchApproval" | "ecc" | "hashes" | "poseidon";
 	
 	// Load UI version and page from localStorage on mount
 	const [uiVersion, setUiVersion] = useState<"classic" | "new">(() => {
@@ -118,6 +119,9 @@ export function App() {
 						<NewTransfer onNavigate={handleNewPageNavigate} mode={mode} />
 					</RegistrationCheck>
 				);
+				break;
+			case "batchApproval":
+				PageComponent = <NewBatchApproval onNavigate={handleNewPageNavigate} />;
 				break;
 			case "ecc":
 				PageComponent = (

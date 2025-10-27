@@ -4,6 +4,7 @@ export { NewDashboard } from "./NewDashboard";
 export { NewDeposit } from "./NewDeposit";
 export { NewWithdraw } from "./NewWithdraw";
 export { NewTransfer } from "./NewTransfer";
+export { NewBatchApproval } from "./NewBatchApproval";
 export { NewECC } from "./NewECC";
 export { NewHashes } from "./NewHashes";
 export { NewPoseidon } from "./NewPoseidon";
